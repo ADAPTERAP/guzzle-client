@@ -3,7 +3,7 @@
     "description": "Обертка над Guzzle",
     "type": "library",
     "license": "MIT",
-    "version": "1.0.0",
+    "version": "1.0.1",
     "authors": [
         {
             "name": "lapaliv",
@@ -15,7 +15,7 @@
         "illuminate/contracts": "^8.40",
         "nesbot/carbon": "^2.31",
         "php": "^7.4|^8.0",
-        "psr/http-message": "1.0.x-dev",
+        "psr/http-message": "^1.0",
         "guzzlehttp/guzzle": "7.4.x-dev",
         "symfony/http-client-contracts": "2.4.x-dev",
         "illuminate/http": "^8.40"

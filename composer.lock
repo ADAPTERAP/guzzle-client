@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "b8c7dff672b01d84a52930b7c42a0922",
+    "content-hash": "fb09f381dccdda052b09f42da6032b96",
     "packages": [
         {
             "name": "doctrine/inflector",
@@ -2868,7 +2868,6 @@
     "aliases": [],
     "minimum-stability": "dev",
     "stability-flags": {
-        "psr/http-message": 20,
         "guzzlehttp/guzzle": 20,
         "symfony/http-client-contracts": 20
     },
