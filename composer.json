@@ -1,0 +1,23 @@
+{
+    "name": "adapterap/guzzle-client",
+    "description": "Обертка над Guzzle",
+    "type": "library",
+    "license": "MIT",
+    "version": "1.0.0",
+    "authors": [
+        {
+            "name": "lapaliv",
+            "email": "lapaliv@gmail.com"
+        }
+    ],
+    "minimum-stability": "dev",
+    "require": {
+        "illuminate/contracts": "^8.40",
+        "nesbot/carbon": "^2.31",
+        "php": "^7.4|^8.0",
+        "psr/http-message": "1.0.x-dev",
+        "guzzlehttp/guzzle": "7.4.x-dev",
+        "symfony/http-client-contracts": "2.4.x-dev",
+        "illuminate/http": "^8.40"
+    }
+}
