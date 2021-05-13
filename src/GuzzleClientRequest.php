@@ -2,9 +2,11 @@
 
 namespace Adapterap\GuzzleClient;
 
+use Adapterap\GuzzleClient\Exceptions\GuzzleClientException;
 use Carbon\Carbon;
 use GuzzleHttp\Client;
 use GuzzleHttp\Exception\GuzzleException;
+use GuzzleHttp\RequestOptions;
 
 /**
  * Class GuzzleClientRequest.
@@ -28,17 +30,25 @@ abstract class GuzzleClientRequest
     protected string $responseClassName;
 
     /**
+     * GuzzleClientRequest constructor.
+     */
+    public function __construct()
+    {
+        $this->client = $this->getClient();
+    }
+
+    /**
      * Create and send an GET HTTP request.
      *
      * Use an absolute path to override the base path of the client, or a
      * relative path to append to the base path of the client. The URL can
      *
      * @param string $url
-     * @param array  $options
-     *
-     * @throws GuzzleException
+     * @param array $options
      *
      * @return GuzzleClientResponse|T
+     * @throws GuzzleException
+     *
      */
     public function get(string $url, array $options = []): GuzzleClientResponse
     {
@@ -52,11 +62,10 @@ abstract class GuzzleClientRequest
      * relative path to append to the base path of the client. The URL can
      *
      * @param string $url
-     * @param array  $options
-     *
-     * @throws GuzzleException
+     * @param array $options
      *
      * @return GuzzleClientResponse|T
+     * @throws GuzzleException
      */
     public function post(string $url, array $options = []): GuzzleClientResponse
     {
@@ -64,13 +73,18 @@ abstract class GuzzleClientRequest
     }
 
     /**
-     * @param string $method
+     * Create and send an HTTP request.
+     *
+     * Use an absolute path to override the base path of the client, or a
+     * relative path to append to the base path of the client. The URL can
+     * contain the query string as well.
+     *
+     * @param string $method HTTP method.
      * @param string $url
-     * @param array  $options
+     * @param array $options Request options to apply. See \GuzzleHttp\RequestOptions.
      *
-     * @throws GuzzleException
-     *
-     * @return GuzzleClientResponse|T
+     * @return GuzzleClientResponse
+     * @throws GuzzleClientException
      */
     public function request(string $method, string $url, array $options = []): GuzzleClientResponse
     {
@@ -84,5 +98,18 @@ abstract class GuzzleClientRequest
             $response,
             $start
         );
+    }
+
+    /**
+     * Возвращает клиент для работы с HTTP.
+     *
+     * @return Client
+     */
+    protected function getClient(): Client
+    {
+        return new Client([
+            RequestOptions::VERIFY => false,
+            RequestOptions::HTTP_ERRORS => false,
+        ]);
     }
 }
