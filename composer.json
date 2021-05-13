@@ -16,7 +16,7 @@
         "nesbot/carbon": "^2.31",
         "php": "^7.4|^8.0",
         "psr/http-message": "^1.0",
-        "guzzlehttp/guzzle": "7.4.x-dev",
+        "guzzlehttp/guzzle": "^7.3",
         "symfony/http-client-contracts": "2.4.x-dev",
         "illuminate/http": "^8.40"
     }
