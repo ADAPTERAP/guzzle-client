@@ -83,7 +83,7 @@ abstract class GuzzleClientRequest
      * @param string $url
      * @param array $options Request options to apply. See \GuzzleHttp\RequestOptions.
      *
-     * @return GuzzleClientResponse
+     * @return GuzzleClientResponse|T
      * @throws GuzzleClientException
      */
     public function request(string $method, string $url, array $options = []): GuzzleClientResponse

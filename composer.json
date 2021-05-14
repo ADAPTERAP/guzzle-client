@@ -1,28 +1,29 @@
 {
-    "name": "adapterap/guzzle-client",
-    "description": "Обертка над Guzzle",
-    "type": "library",
-    "license": "MIT",
-    "version": "1.0.4",
-    "authors": [
-        {
-            "name": "lapaliv",
-            "email": "lapaliv@gmail.com"
-        }
-    ],
-    "minimum-stability": "dev",
-    "require": {
-        "illuminate/contracts": "^8.40",
-        "nesbot/carbon": "^2.31",
-        "php": "^7.4|^8.0",
-        "psr/http-message": "^1.0",
-        "guzzlehttp/guzzle": "^7.3",
-        "symfony/http-client-contracts": "^2.2",
-        "illuminate/http": "^8.40"
-    },
-    "autoload": {
-        "psr-4": {
-            "Adapterap\\GuzzleClient\\": "src/"
-        }
+  "name": "adapterap/guzzle-client",
+  "description": "Обертка над Guzzle",
+  "type": "library",
+  "license": "MIT",
+  "version": "1.0.5",
+  "authors": [
+    {
+      "name": "lapaliv",
+      "email": "lapaliv@gmail.com"
     }
+  ],
+  "minimum-stability": "dev",
+  "require": {
+    "illuminate/contracts": "^8.40",
+    "nesbot/carbon": "^2.31",
+    "php": "^7.4|^8.0",
+    "psr/http-message": "^1.0",
+    "guzzlehttp/guzzle": "^7.3",
+    "symfony/http-client-contracts": "^2.2",
+    "illuminate/http": "^8.40",
+    "ext-json": "*"
+  },
+  "autoload": {
+    "psr-4": {
+      "Adapterap\\GuzzleClient\\": "src/"
+    }
+  }
 }
