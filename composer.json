@@ -19,5 +19,10 @@
         "guzzlehttp/guzzle": "^7.3",
         "symfony/http-client-contracts": "^2.2",
         "illuminate/http": "^8.40"
+    },
+    "autoload": {
+        "psr-4": {
+            "Adapterap\\GuzzleClient\\": "src/"
+        }
     }
 }
