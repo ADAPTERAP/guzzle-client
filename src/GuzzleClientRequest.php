@@ -13,7 +13,7 @@ use GuzzleHttp\RequestOptions;
  *
  * @template T of GuzzleClientResponse.
  */
-abstract class GuzzleClientRequest
+class GuzzleClientRequest
 {
     /**
      * HTTP клиент.
@@ -30,11 +30,30 @@ abstract class GuzzleClientRequest
     protected string $responseClassName;
 
     /**
+     * Глобальные заголовки.
+     *
+     * @var array
+     */
+    protected array $headers = [];
+
+    /**
      * GuzzleClientRequest constructor.
      */
     public function __construct()
     {
         $this->client = $this->getClient();
+    }
+
+    /**
+     * Запрашивает ответ в виде JSON у сервера.
+     *
+     * @return $this
+     */
+    public function acceptJson(): GuzzleClientRequest
+    {
+        $this->headers['Accept'] = 'application/json';
+
+        return $this;
     }
 
     /**
@@ -48,7 +67,6 @@ abstract class GuzzleClientRequest
      *
      * @return GuzzleClientResponse|T
      * @throws GuzzleException
-     *
      */
     public function get(string $url, array $options = []): GuzzleClientResponse
     {
@@ -84,11 +102,16 @@ abstract class GuzzleClientRequest
      * @param array $options Request options to apply. See \GuzzleHttp\RequestOptions.
      *
      * @return GuzzleClientResponse|T
-     * @throws GuzzleClientException
+     * @throws GuzzleClientException|GuzzleException
      */
     public function request(string $method, string $url, array $options = []): GuzzleClientResponse
     {
         $start = Carbon::now();
+
+        $options = array_merge($options, [
+            RequestOptions::HEADERS => $this->headers
+        ]);
+
         $response = $this->client->request($method, $url, $options);
 
         return new $this->responseClassName(
@@ -98,6 +121,20 @@ abstract class GuzzleClientRequest
             $response,
             $start
         );
+    }
+
+    /**
+     * Сеттер для client.
+     *
+     * @param Client $client
+     *
+     * @return $this
+     */
+    public function setClient(Client $client): GuzzleClientRequest
+    {
+        $this->client = $client;
+
+        return $this;
     }
 
     /**
