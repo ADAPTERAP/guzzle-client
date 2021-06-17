@@ -1,6 +1,6 @@
 <?php
 
-namespace Adapterap\Support\GuzzleClient\GuzzleClientResponse;
+namespace Adapterap\GuzzleClient\GuzzleClientResponse;
 
 use Carbon\CarbonInterface;
 use Illuminate\Contracts\Support\Arrayable;

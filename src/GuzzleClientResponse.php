@@ -9,7 +9,7 @@ use Adapterap\GuzzleClient\Exceptions\MethodNotSupportedException;
 use Adapterap\GuzzleClient\Exceptions\RedirectionException;
 use Adapterap\GuzzleClient\Exceptions\ServerException;
 use Adapterap\GuzzleClient\Exceptions\UnauthorizedException;
-use Adapterap\Support\GuzzleClient\GuzzleClientResponse\GuzzleClientResponseInfo;
+use Adapterap\GuzzleClient\GuzzleClientResponse\GuzzleClientResponseInfo;
 use Carbon\CarbonInterface;
 use JsonException;
 use Psr\Http\Message\ResponseInterface as PsrResponseInterface;

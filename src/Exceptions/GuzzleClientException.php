@@ -6,7 +6,12 @@ use Adapterap\GuzzleClient\GuzzleClientResponse;
 use Illuminate\Contracts\Support\Responsable;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Log;
 use RuntimeException;
+use Symfony\Contracts\HttpClient\Exception\ClientExceptionInterface;
+use Symfony\Contracts\HttpClient\Exception\RedirectionExceptionInterface;
+use Symfony\Contracts\HttpClient\Exception\ServerExceptionInterface;
+use Symfony\Contracts\HttpClient\Exception\TransportExceptionInterface;
 use Symfony\Contracts\HttpClient\ResponseInterface;
 
 abstract class GuzzleClientException extends RuntimeException implements Responsable
@@ -22,7 +27,7 @@ abstract class GuzzleClientException extends RuntimeException implements Respons
      * GuzzleClientException constructor.
      *
      * @param GuzzleClientResponse $response
-     * @param null|string          $message
+     * @param null|string $message
      */
     public function __construct(GuzzleClientResponse $response, ?string $message = null)
     {
@@ -53,5 +58,21 @@ abstract class GuzzleClientException extends RuntimeException implements Respons
         return new JsonResponse([
             'message' => $this->getMessage(),
         ], JsonResponse::HTTP_INTERNAL_SERVER_ERROR);
+    }
+
+    /**
+     * Отправляет информацию об ошибке клиенту.
+     *
+     * @throws ClientExceptionInterface
+     * @throws RedirectionExceptionInterface
+     * @throws ServerExceptionInterface
+     * @throws TransportExceptionInterface
+     */
+    public function report(): void
+    {
+        Log::error($this->getMessage(), [
+            'response' => $this->getResponse()->getContent(false),
+            'exception' => $this,
+        ]);
     }
 }
