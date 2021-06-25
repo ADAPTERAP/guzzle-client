@@ -225,7 +225,7 @@ class GuzzleClientResponse implements ResponseInterface
      * @throws ForbiddenException            On a 403 when $throw is true
      * @throws ServerExceptionInterface      On a 5xx when $throw is true
      */
-    public function throwAnExceptionIfNeed(bool $throw): void
+    public function throwAnExceptionIfNeed(bool $throw = true): void
     {
         if ($throw && $this->getStatusCode() >= Response::HTTP_INTERNAL_SERVER_ERROR) {
             throw new ServerException($this);
