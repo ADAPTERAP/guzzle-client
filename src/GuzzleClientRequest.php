@@ -108,9 +108,10 @@ class GuzzleClientRequest
     {
         $start = Carbon::now();
 
-        $options = array_merge($options, [
-            RequestOptions::HEADERS => $this->headers
-        ]);
+        $options[RequestOptions::HEADERS] = array_merge(
+            $options[RequestOptions::HEADERS] ?? [],
+            $this->headers
+        );
 
         $response = $this->client->request($method, $url, $options);
 
