@@ -37,6 +37,13 @@ class GuzzleClientRequest
     protected array $headers = [];
 
     /**
+     * Хост сервера, на который будут посылаться запросы.
+     *
+     * @var string|null
+     */
+    protected ?string $baseUri;
+
+    /**
      * GuzzleClientRequest constructor.
      */
     public function __construct()
@@ -146,6 +153,7 @@ class GuzzleClientRequest
     protected function getClient(): Client
     {
         return new Client([
+            'base_uri' => $this->baseUri,
             RequestOptions::VERIFY => false,
             RequestOptions::HTTP_ERRORS => false,
         ]);
