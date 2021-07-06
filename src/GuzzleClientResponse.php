@@ -6,6 +6,7 @@ use Adapterap\GuzzleClient\Exceptions\ClientException;
 use Adapterap\GuzzleClient\Exceptions\DecodingException;
 use Adapterap\GuzzleClient\Exceptions\ForbiddenException;
 use Adapterap\GuzzleClient\Exceptions\MethodNotSupportedException;
+use Adapterap\GuzzleClient\Exceptions\NotFoundException;
 use Adapterap\GuzzleClient\Exceptions\RedirectionException;
 use Adapterap\GuzzleClient\Exceptions\ServerException;
 use Adapterap\GuzzleClient\Exceptions\UnauthorizedException;
@@ -67,11 +68,11 @@ class GuzzleClientResponse implements ResponseInterface
     /**
      * GuzzleClientResponse constructor.
      *
-     * @param string               $method
-     * @param string               $url
-     * @param array                $options
+     * @param string $method
+     * @param string $url
+     * @param array $options
      * @param PsrResponseInterface $response
-     * @param CarbonInterface      $startTime
+     * @param CarbonInterface $startTime
      */
     public function __construct(
         string $method,
@@ -79,7 +80,8 @@ class GuzzleClientResponse implements ResponseInterface
         array $options,
         PsrResponseInterface $response,
         CarbonInterface $startTime
-    ) {
+    )
+    {
         $this->method = $method;
         $this->url = $url;
         $this->options = $options;
@@ -87,7 +89,7 @@ class GuzzleClientResponse implements ResponseInterface
         $this->startTime = $startTime;
 
         $content = $this->response->getBody()->getContents();
-        $this->content = (string) str_replace(' ', ' ', $content);
+        $this->content = (string)str_replace(' ', ' ', $content);
     }
 
     /**
@@ -103,11 +105,11 @@ class GuzzleClientResponse implements ResponseInterface
      *
      * @param bool $throw Whether an exception should be thrown on 3/4/5xx status codes
      *
-     * @throws RedirectionExceptionInterface On a 3xx when $throw is true and the "max_redirects" option has been reached
+     * @return string[][] The headers of the response keyed by header names in lowercase
      * @throws ClientExceptionInterface      On a 4xx when $throw is true
      * @throws ServerExceptionInterface      On a 5xx when $throw is true
      *
-     * @return string[][] The headers of the response keyed by header names in lowercase
+     * @throws RedirectionExceptionInterface On a 3xx when $throw is true and the "max_redirects" option has been reached
      */
     public function getHeaders(bool $throw = true): array
     {
@@ -121,11 +123,11 @@ class GuzzleClientResponse implements ResponseInterface
      *
      * @param bool $throw Whether an exception should be thrown on 3/4/5xx status codes
      *
-     * @throws RedirectionExceptionInterface On a 3xx when $throw is true and the "max_redirects" option has been reached
+     * @return string
      * @throws ClientExceptionInterface      On a 4xx when $throw is true
      * @throws ServerExceptionInterface      On a 5xx when $throw is true
      *
-     * @return string
+     * @throws RedirectionExceptionInterface On a 3xx when $throw is true and the "max_redirects" option has been reached
      */
     public function getContent(bool $throw = true): string
     {
@@ -139,12 +141,12 @@ class GuzzleClientResponse implements ResponseInterface
      *
      * @param bool $throw Whether an exception should be thrown on 3/4/5xx status codes
      *
-     * @throws DecodingExceptionInterface    When the body cannot be decoded to an array
+     * @return array
      * @throws RedirectionExceptionInterface On a 3xx when $throw is true and the "max_redirects" option has been reached
      * @throws ClientExceptionInterface      On a 4xx when $throw is true
      * @throws ServerExceptionInterface      On a 5xx when $throw is true
      *
-     * @return array
+     * @throws DecodingExceptionInterface    When the body cannot be decoded to an array
      */
     public function toArray(bool $throw = true): array
     {
@@ -223,20 +225,25 @@ class GuzzleClientResponse implements ResponseInterface
      * @throws ClientExceptionInterface      On a 4xx when $throw is true
      * @throws UnauthorizedException         On a 401 when $throw is true
      * @throws ForbiddenException            On a 403 when $throw is true
+     * @throws NotFoundException             On a 404 when $throw is true
      * @throws ServerExceptionInterface      On a 5xx when $throw is true
      */
     public function throwAnExceptionIfNeed(bool $throw = true): void
     {
+        if ($throw) {
+            switch ($this->getStatusCode()) {
+                case Response::HTTP_UNAUTHORIZED:
+                    throw new UnauthorizedException($this);
+                case Response::HTTP_FORBIDDEN:
+                    throw new ForbiddenException($this);
+                case Response::HTTP_NOT_FOUND:
+                    throw new NotFoundException($this);
+            }
+        }
+
+
         if ($throw && $this->getStatusCode() >= Response::HTTP_INTERNAL_SERVER_ERROR) {
             throw new ServerException($this);
-        }
-
-        if ($throw && $this->getStatusCode() === Response::HTTP_UNAUTHORIZED) {
-            throw new UnauthorizedException($this);
-        }
-
-        if ($throw && $this->getStatusCode() === Response::HTTP_FORBIDDEN) {
-            throw new ForbiddenException($this);
         }
 
         if ($throw && $this->getStatusCode() >= Response::HTTP_BAD_REQUEST) {
