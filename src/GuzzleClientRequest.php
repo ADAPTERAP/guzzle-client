@@ -48,8 +48,8 @@ class GuzzleClientRequest
      */
     public function __construct(string $baseUri)
     {
-        $this->client = $this->getClient();
         $this->baseUri = $baseUri;
+        $this->client = $this->getClient();
     }
 
     /**
