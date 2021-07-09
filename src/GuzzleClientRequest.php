@@ -39,16 +39,17 @@ class GuzzleClientRequest
     /**
      * Хост сервера, на который будут посылаться запросы.
      *
-     * @var string|null
+     * @var string
      */
-    protected ?string $baseUri;
+    protected string $baseUri;
 
     /**
      * GuzzleClientRequest constructor.
      */
-    public function __construct()
+    public function __construct(string $baseUri)
     {
         $this->client = $this->getClient();
+        $this->baseUri = $baseUri;
     }
 
     /**
