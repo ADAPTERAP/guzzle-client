@@ -122,14 +122,18 @@ class GuzzleClientRequest
         );
 
         $response = $this->client->request($method, $url, $options);
-
-        return new $this->responseClassName(
+        $result = new $this->responseClassName(
             $method,
             $url,
             $options,
             $response,
             $start
         );
+
+        // Закрываем соединение
+        $response->getBody()->close();
+
+        return $result;
     }
 
     /**
