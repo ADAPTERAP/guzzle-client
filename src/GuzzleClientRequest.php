@@ -65,10 +65,11 @@ class GuzzleClientRequest
     }
 
     /**
-     * Create and send an GET HTTP request.
+     * Create and send an HTTP GET request.
      *
      * Use an absolute path to override the base path of the client, or a
      * relative path to append to the base path of the client. The URL can
+     * contain the query string as well.
      *
      * @param string $url
      * @param array $options
@@ -82,10 +83,11 @@ class GuzzleClientRequest
     }
 
     /**
-     * Create and send an POST HTTP request.
+     * Create and send an HTTP POST request.
      *
      * Use an absolute path to override the base path of the client, or a
      * relative path to append to the base path of the client. The URL can
+     * contain the query string as well.
      *
      * @param string $url
      * @param array $options
@@ -96,6 +98,112 @@ class GuzzleClientRequest
     public function post(string $url, array $options = []): GuzzleClientResponse
     {
         return $this->request('POST', $url, $options);
+    }
+
+    /**
+     * Create and send an HTTP PUT request.
+     *
+     * Use an absolute path to override the base path of the client, or a
+     * relative path to append to the base path of the client. The URL can
+     * contain the query string as well.
+     *
+     * @param string $url
+     * @param array $options
+     *
+     * @return GuzzleClientResponse|T
+     * @throws GuzzleException
+     */
+    public function put(string $url, array $options = []): GuzzleClientResponse
+    {
+        return $this->request('PUT', $url, $options);
+    }
+
+    /**
+     * Create and send an HTTP DELETE request.
+     *
+     * Use an absolute path to override the base path of the client, or a
+     * relative path to append to the base path of the client. The URL can
+     * contain the query string as well.
+     *
+     * @param string $url
+     * @param array $options
+     *
+     * @return GuzzleClientResponse|T
+     * @throws GuzzleException
+     */
+    public function delete(string $url, array $options = []): GuzzleClientResponse
+    {
+        return $this->request('DELETE', $url, $options);
+    }
+
+    /**
+     * Create and send an HTTP PATCH request.
+     *
+     * Use an absolute path to override the base path of the client, or a
+     * relative path to append to the base path of the client. The URL can
+     * contain the query string as well.
+     *
+     * @param string $url
+     * @param array $options
+     *
+     * @return GuzzleClientResponse|T
+     * @throws GuzzleException
+     */
+    public function patch(string $url, array $options = []): GuzzleClientResponse
+    {
+        return $this->request('PATCH', $url, $options);
+    }
+
+    /**
+     * Create and send an HTTP HEAD request.
+     *
+     * Use an absolute path to override the base path of the client, or a
+     * relative path to append to the base path of the client. The URL can
+     * contain the query string as well.
+     *
+     * @param string $url
+     * @param array $options
+     *
+     * @return GuzzleClientResponse|T
+     * @throws GuzzleException
+     */
+    public function head(string $url, array $options = []): GuzzleClientResponse
+    {
+        return $this->request('HEAD', $url, $options);
+    }
+
+    /**
+     * Create and send an CONNECT HTTP request.
+     *
+     * Use an absolute path to override the base path of the client, or a
+     * relative path to append to the base path of the client. The URL can
+     *
+     * @param string $url
+     * @param array $options
+     *
+     * @return GuzzleClientResponse|T
+     * @throws GuzzleException
+     */
+    public function connect(string $url, array $options = []): GuzzleClientResponse
+    {
+        return $this->request('CONNECT', $url, $options);
+    }
+
+    /**
+     * Create and send an OPTIONS HTTP request.
+     *
+     * Use an absolute path to override the base path of the client, or a
+     * relative path to append to the base path of the client. The URL can
+     *
+     * @param string $url
+     * @param array $options
+     *
+     * @return GuzzleClientResponse|T
+     * @throws GuzzleException
+     */
+    public function options(string $url, array $options = []): GuzzleClientResponse
+    {
+        return $this->request('OPTIONS', $url, $options);
     }
 
     /**
