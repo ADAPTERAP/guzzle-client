@@ -10,6 +10,7 @@ use Adapterap\GuzzleClient\Exceptions\NotFoundException;
 use Adapterap\GuzzleClient\Exceptions\RedirectionException;
 use Adapterap\GuzzleClient\Exceptions\ServerException;
 use Adapterap\GuzzleClient\Exceptions\UnauthorizedException;
+use Adapterap\GuzzleClient\Exceptions\UnprocessableEntityException;
 use Adapterap\GuzzleClient\GuzzleClientResponse\GuzzleClientResponseInfo;
 use Carbon\CarbonInterface;
 use JsonException;
@@ -75,11 +76,11 @@ class GuzzleClientResponse implements ResponseInterface
      * @param CarbonInterface $startTime
      */
     public function __construct(
-        string $method,
-        string $url,
-        array $options,
+        string               $method,
+        string               $url,
+        array                $options,
         PsrResponseInterface $response,
-        CarbonInterface $startTime
+        CarbonInterface      $startTime
     )
     {
         $this->method = $method;
@@ -226,6 +227,7 @@ class GuzzleClientResponse implements ResponseInterface
      * @throws UnauthorizedException         On a 401 when $throw is true
      * @throws ForbiddenException            On a 403 when $throw is true
      * @throws NotFoundException             On a 404 when $throw is true
+     * @throws UnprocessableEntityException  On a 404 when $throw is true
      * @throws ServerExceptionInterface      On a 5xx when $throw is true
      */
     public function throwAnExceptionIfNeed(bool $throw = true): void
@@ -238,9 +240,10 @@ class GuzzleClientResponse implements ResponseInterface
                     throw new ForbiddenException($this);
                 case Response::HTTP_NOT_FOUND:
                     throw new NotFoundException($this);
+                case Response::HTTP_UNPROCESSABLE_ENTITY:
+                    throw new UnprocessableEntityException($this);
             }
         }
-
 
         if ($throw && $this->getStatusCode() >= Response::HTTP_INTERNAL_SERVER_ERROR) {
             throw new ServerException($this);
