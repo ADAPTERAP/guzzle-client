@@ -241,7 +241,7 @@ class GuzzleClientResponse implements ResponseInterface
                 case Response::HTTP_NOT_FOUND:
                     throw new NotFoundException($this);
                 case Response::HTTP_UNPROCESSABLE_ENTITY:
-                    throw new UnprocessableEntityException($this);
+                    throw new UnprocessableEntityException($this, $this->toArray(false)['message'] ?? null);
             }
         }
 
