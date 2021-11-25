@@ -2,7 +2,10 @@
 
 namespace Adapterap\GuzzleClient\Exceptions;
 
-class ForbiddenException extends ClientException
+/**
+ * @deprecated use Adapterap\GuzzleClient\Exceptions\Client\HttpForbiddenException
+ */
+class ForbiddenException extends \Adapterap\GuzzleClient\Exceptions\Client\HttpForbiddenException
 {
     // Nothing
 }
