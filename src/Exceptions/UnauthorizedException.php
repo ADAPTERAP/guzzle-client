@@ -2,7 +2,10 @@
 
 namespace Adapterap\GuzzleClient\Exceptions;
 
-class UnauthorizedException extends ClientException
+/**
+ * @deprecated use Adapterap\GuzzleClient\Exceptions\Client\HttpUnauthorizedException
+ */
+class UnauthorizedException extends \Adapterap\GuzzleClient\Exceptions\Client\HttpUnauthorizedException
 {
     // Nothing
 }

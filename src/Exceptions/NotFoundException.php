@@ -2,7 +2,10 @@
 
 namespace Adapterap\GuzzleClient\Exceptions;
 
-class NotFoundException extends ClientException
+/**
+ * @deprecated use Adapterap\GuzzleClient\Exceptions\Client\HttpNotFoundException
+ */
+class NotFoundException extends \Adapterap\GuzzleClient\Exceptions\Client\HttpNotFoundException
 {
     // Nothing
 }

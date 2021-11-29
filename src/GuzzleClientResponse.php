@@ -2,15 +2,41 @@
 
 namespace Adapterap\GuzzleClient;
 
+use Adapterap\GuzzleClient\Exceptions\Client\HttpBadRequestException;
+use Adapterap\GuzzleClient\Exceptions\Client\HttpConflictException;
+use Adapterap\GuzzleClient\Exceptions\Client\HttpExpectationFailedException;
+use Adapterap\GuzzleClient\Exceptions\Client\HttpFailedDependencyException;
+use Adapterap\GuzzleClient\Exceptions\Client\HttpForbiddenException;
+use Adapterap\GuzzleClient\Exceptions\Client\HttpGoneException;
+use Adapterap\GuzzleClient\Exceptions\Client\HttpIAmATeapotException;
+use Adapterap\GuzzleClient\Exceptions\Client\HttpLengthRequiredException;
+use Adapterap\GuzzleClient\Exceptions\Client\HttpLockedException;
+use Adapterap\GuzzleClient\Exceptions\Client\HttpMethodNotAllowedException;
+use Adapterap\GuzzleClient\Exceptions\Client\HttpMisdirectedRequestException;
+use Adapterap\GuzzleClient\Exceptions\Client\HttpNotAcceptableException;
+use Adapterap\GuzzleClient\Exceptions\Client\HttpNotFoundException;
+use Adapterap\GuzzleClient\Exceptions\Client\HttpPaymentRequiredException;
+use Adapterap\GuzzleClient\Exceptions\Client\HttpPreconditionFailedException;
+use Adapterap\GuzzleClient\Exceptions\Client\HttpPreconditionRequiredException;
+use Adapterap\GuzzleClient\Exceptions\Client\HttpProxyAuthenticationRequiredException;
+use Adapterap\GuzzleClient\Exceptions\Client\HttpRequestedRangeNotSatisfiableException;
+use Adapterap\GuzzleClient\Exceptions\Client\HttpRequestEntityTooLargeException;
+use Adapterap\GuzzleClient\Exceptions\Client\HttpRequestHeaderFieldsTooLargeException;
+use Adapterap\GuzzleClient\Exceptions\Client\HttpRequestTimeoutException;
+use Adapterap\GuzzleClient\Exceptions\Client\HttpRequestUriTooLongException;
+use Adapterap\GuzzleClient\Exceptions\Client\HttpTooEarlyException;
+use Adapterap\GuzzleClient\Exceptions\Client\HttpTooManyRequestsException;
+use Adapterap\GuzzleClient\Exceptions\Client\HttpUnauthorizedException;
+use Adapterap\GuzzleClient\Exceptions\Client\HttpUnavailableForLegalReasonsException;
+use Adapterap\GuzzleClient\Exceptions\Client\HttpUnsupportedMediaType;
+use Adapterap\GuzzleClient\Exceptions\Client\HttpUpgradeRequiredException;
+use Adapterap\GuzzleClient\Exceptions\Client\HttpUnprocessableEntityException;
 use Adapterap\GuzzleClient\Exceptions\ClientException;
 use Adapterap\GuzzleClient\Exceptions\DecodingException;
-use Adapterap\GuzzleClient\Exceptions\ForbiddenException;
+use Adapterap\GuzzleClient\Exceptions\GuzzleClientException;
 use Adapterap\GuzzleClient\Exceptions\MethodNotSupportedException;
-use Adapterap\GuzzleClient\Exceptions\NotFoundException;
 use Adapterap\GuzzleClient\Exceptions\RedirectionException;
 use Adapterap\GuzzleClient\Exceptions\ServerException;
-use Adapterap\GuzzleClient\Exceptions\UnauthorizedException;
-use Adapterap\GuzzleClient\Exceptions\UnprocessableEntityException;
 use Adapterap\GuzzleClient\GuzzleClientResponse\GuzzleClientResponseInfo;
 use Carbon\CarbonInterface;
 use JsonException;
@@ -222,26 +248,71 @@ class GuzzleClientResponse implements ResponseInterface
      *
      * @param bool $throw Whether an exception should be thrown on 3/4/5xx status codes
      *
-     * @throws RedirectionExceptionInterface On a 3xx when $throw is true and the "max_redirects" option has been reached
-     * @throws ClientExceptionInterface      On a 4xx when $throw is true
-     * @throws UnauthorizedException         On a 401 when $throw is true
-     * @throws ForbiddenException            On a 403 when $throw is true
-     * @throws NotFoundException             On a 404 when $throw is true
-     * @throws UnprocessableEntityException  On a 404 when $throw is true
-     * @throws ServerExceptionInterface      On a 5xx when $throw is true
+     * @throws GuzzleClientException|ClientExceptionInterface
      */
     public function throwAnExceptionIfNeed(bool $throw = true): void
     {
         if ($throw) {
             switch ($this->getStatusCode()) {
+                // 4xx
+                case Response::HTTP_BAD_REQUEST:
+                    throw new HttpBadRequestException($this);
                 case Response::HTTP_UNAUTHORIZED:
-                    throw new UnauthorizedException($this);
+                    throw new HttpUnauthorizedException($this);
+                case Response::HTTP_PAYMENT_REQUIRED:
+                    throw new HttpPaymentRequiredException($this);
                 case Response::HTTP_FORBIDDEN:
-                    throw new ForbiddenException($this);
+                    throw new HttpForbiddenException($this);
                 case Response::HTTP_NOT_FOUND:
-                    throw new NotFoundException($this);
+                    throw new HttpNotFoundException($this);
+                case Response::HTTP_METHOD_NOT_ALLOWED:
+                    throw new HttpMethodNotAllowedException($this);
+                case Response::HTTP_NOT_ACCEPTABLE:
+                    throw new HttpNotAcceptableException($this);
+                case Response::HTTP_PROXY_AUTHENTICATION_REQUIRED:
+                    throw new HttpProxyAuthenticationRequiredException($this);
+                case Response::HTTP_REQUEST_TIMEOUT:
+                    throw new HttpRequestTimeoutException($this);
+                case Response::HTTP_CONFLICT:
+                    throw new HttpConflictException($this);
+                case Response::HTTP_GONE:
+                    throw new HttpGoneException($this);
+                case Response::HTTP_LENGTH_REQUIRED:
+                    throw new HttpLengthRequiredException($this);
+                case Response::HTTP_PRECONDITION_FAILED:
+                    throw new HttpPreconditionFailedException($this);
+                case Response::HTTP_REQUEST_ENTITY_TOO_LARGE:
+                    throw new HttpRequestEntityTooLargeException($this);
+                case Response::HTTP_REQUEST_URI_TOO_LONG:
+                    throw new HttpRequestUriTooLongException($this);
+                case Response::HTTP_UNSUPPORTED_MEDIA_TYPE:
+                    throw new HttpUnsupportedMediaType($this);
+                case Response::HTTP_REQUESTED_RANGE_NOT_SATISFIABLE:
+                    throw new HttpRequestedRangeNotSatisfiableException($this);
+                case Response::HTTP_EXPECTATION_FAILED:
+                    throw new HttpExpectationFailedException($this);
+                case Response::HTTP_I_AM_A_TEAPOT:
+                    throw new HttpIAmATeapotException($this);
+                case Response::HTTP_MISDIRECTED_REQUEST:
+                    throw new HttpMisdirectedRequestException($this);
                 case Response::HTTP_UNPROCESSABLE_ENTITY:
-                    throw new UnprocessableEntityException($this, $this->toArray(false)['message'] ?? null);
+                    throw new HttpUnprocessableEntityException($this, $this->toArray(false)['message'] ?? null);
+                case Response::HTTP_LOCKED:
+                    throw new HttpLockedException($this);
+                case Response::HTTP_FAILED_DEPENDENCY:
+                    throw new HttpFailedDependencyException($this);
+                case Response::HTTP_TOO_EARLY:
+                    throw new HttpTooEarlyException($this);
+                case Response::HTTP_UPGRADE_REQUIRED:
+                    throw new HttpUpgradeRequiredException($this);
+                case Response::HTTP_PRECONDITION_REQUIRED:
+                    throw new HttpPreconditionRequiredException($this);
+                case Response::HTTP_TOO_MANY_REQUESTS:
+                    throw new HttpTooManyRequestsException($this);
+                case Response::HTTP_REQUEST_HEADER_FIELDS_TOO_LARGE:
+                    throw new HttpRequestHeaderFieldsTooLargeException($this);
+                case Response::HTTP_UNAVAILABLE_FOR_LEGAL_REASONS:
+                    throw new HttpUnavailableForLegalReasonsException($this);
             }
         }
 
