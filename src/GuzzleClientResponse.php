@@ -4,6 +4,7 @@ namespace Adapterap\GuzzleClient;
 
 use Adapterap\GuzzleClient\Exceptions\Client\HttpBadRequestException;
 use Adapterap\GuzzleClient\Exceptions\Client\HttpConflictException;
+use Adapterap\GuzzleClient\Exceptions\Client\HttpEnhanceYourCalmException;
 use Adapterap\GuzzleClient\Exceptions\Client\HttpExpectationFailedException;
 use Adapterap\GuzzleClient\Exceptions\Client\HttpFailedDependencyException;
 use Adapterap\GuzzleClient\Exceptions\Client\HttpForbiddenException;
@@ -293,6 +294,8 @@ class GuzzleClientResponse implements ResponseInterface
                     throw new HttpExpectationFailedException($this);
                 case Response::HTTP_I_AM_A_TEAPOT:
                     throw new HttpIAmATeapotException($this);
+                case 420:
+                    throw new HttpEnhanceYourCalmException($this);
                 case Response::HTTP_MISDIRECTED_REQUEST:
                     throw new HttpMisdirectedRequestException($this);
                 case Response::HTTP_UNPROCESSABLE_ENTITY:
