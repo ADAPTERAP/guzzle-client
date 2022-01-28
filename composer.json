@@ -3,7 +3,7 @@
   "description": "Обертка над Guzzle",
   "type": "library",
   "license": "MIT",
-  "version": "1.4.0",
+  "version": "1.4.1",
   "authors": [
     {
       "name": "lapaliv",
