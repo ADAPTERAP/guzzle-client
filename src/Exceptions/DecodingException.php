@@ -4,8 +4,10 @@ namespace Adapterap\GuzzleClient\Exceptions;
 
 use Throwable;
 use Adapterap\GuzzleClient\GuzzleClientResponse;
-use Illuminate\Support\Facades\Log;
+use Symfony\Contracts\HttpClient\Exception\ClientExceptionInterface;
+use Symfony\Contracts\HttpClient\Exception\ServerExceptionInterface;
 use Symfony\Contracts\HttpClient\Exception\DecodingExceptionInterface;
+use Symfony\Contracts\HttpClient\Exception\RedirectionExceptionInterface;
 
 class DecodingException extends GuzzleClientException implements DecodingExceptionInterface
 {
@@ -22,13 +24,17 @@ class DecodingException extends GuzzleClientException implements DecodingExcepti
     }
 
     /**
-     * Report about the problem.
+     * @throws ClientExceptionInterface
+     * @throws RedirectionExceptionInterface
+     * @throws ServerExceptionInterface
+     *
+     * @return array
      */
-    public function report(): void
+    public function context(): array
     {
-        Log::info($this->getMessage(), [
-            'context' => $this->response->getContent(false),
+        return [
+            'content' => $this->response->getContent(false),
             'exception' => $this->throwable,
-        ]);
+        ];
     }
 }
