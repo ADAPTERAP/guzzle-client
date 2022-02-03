@@ -182,7 +182,7 @@ class GuzzleClientResponse implements ResponseInterface
             return json_decode($this->getContent($throw), true, 512, JSON_THROW_ON_ERROR);
         } catch (JsonException $exception) {
             if ($throw) {
-                throw new DecodingException($this);
+                throw new DecodingException($this, $exception);
             }
 
             return [];

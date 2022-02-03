@@ -2,9 +2,12 @@
 
 namespace Adapterap\GuzzleClient\Exceptions;
 
+use Throwable;
 use Adapterap\GuzzleClient\GuzzleClientResponse;
-use Illuminate\Support\Facades\Log;
+use Symfony\Contracts\HttpClient\Exception\ClientExceptionInterface;
+use Symfony\Contracts\HttpClient\Exception\ServerExceptionInterface;
 use Symfony\Contracts\HttpClient\Exception\DecodingExceptionInterface;
+use Symfony\Contracts\HttpClient\Exception\RedirectionExceptionInterface;
 
 class DecodingException extends GuzzleClientException implements DecodingExceptionInterface
 {
@@ -12,20 +15,26 @@ class DecodingException extends GuzzleClientException implements DecodingExcepti
      * DecodingException constructor.
      *
      * @param GuzzleClientResponse $response
+     * @param Throwable            $throwable
      * @param null|string          $message
      */
-    public function __construct(GuzzleClientResponse $response, ?string $message = null)
+    public function __construct(GuzzleClientResponse $response, private Throwable $throwable, ?string $message = null)
     {
         parent::__construct($response, $message ?? 'Не удалось привести ответ от сервера к массиву');
     }
 
     /**
-     * Report about the problem.
+     * @throws ClientExceptionInterface
+     * @throws RedirectionExceptionInterface
+     * @throws ServerExceptionInterface
+     *
+     * @return array
      */
-    public function report(): void
+    public function context(): array
     {
-        Log::info($this->getMessage(), [
+        return [
             'content' => $this->response->getContent(false),
-        ]);
+            'exception' => $this->throwable,
+        ];
     }
 }
