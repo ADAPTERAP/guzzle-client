@@ -11,6 +11,7 @@
     }
   ],
   "minimum-stability": "dev",
+  "prefer-stable": true ,
   "require": {
     "illuminate/contracts": "8.x-dev|9.x-dev",
     "nesbot/carbon": "^2.31",
