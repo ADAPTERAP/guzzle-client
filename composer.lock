@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "11aa3ac26f70a46f6e2986ed62c9dbc5",
+    "content-hash": "4d7f56bcb067c3c4d6430a0ada2db2a3",
     "packages": [
         {
             "name": "doctrine/inflector",
@@ -523,16 +523,16 @@
         },
         {
             "name": "illuminate/contracts",
-            "version": "9.x-dev",
+            "version": "v9.0.2",
             "source": {
                 "type": "git",
                 "url": "https://github.com/illuminate/contracts.git",
-                "reference": "c2e3cf2eda10fd3332af0b4a43481cc0af98c437"
+                "reference": "a6e356b03c62e96561072e569bdb3e15fe118d3f"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/illuminate/contracts/zipball/c2e3cf2eda10fd3332af0b4a43481cc0af98c437",
-                "reference": "c2e3cf2eda10fd3332af0b4a43481cc0af98c437",
+                "url": "https://api.github.com/repos/illuminate/contracts/zipball/a6e356b03c62e96561072e569bdb3e15fe118d3f",
+                "reference": "a6e356b03c62e96561072e569bdb3e15fe118d3f",
                 "shasum": ""
             },
             "require": {
@@ -567,7 +567,7 @@
                 "issues": "https://github.com/laravel/framework/issues",
                 "source": "https://github.com/laravel/framework"
             },
-            "time": "2022-02-11T14:24:50+00:00"
+            "time": "2022-02-01T14:44:21+00:00"
         },
         {
             "name": "illuminate/filesystem",
@@ -633,16 +633,16 @@
         },
         {
             "name": "illuminate/http",
-            "version": "9.x-dev",
+            "version": "v9.0.2",
             "source": {
                 "type": "git",
                 "url": "https://github.com/illuminate/http.git",
-                "reference": "e0248518e2292eb46a4f019396569f760a07ab5e"
+                "reference": "04d650e70e4fef9e2c3364b740aac1d95abc8e0e"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/illuminate/http/zipball/e0248518e2292eb46a4f019396569f760a07ab5e",
-                "reference": "e0248518e2292eb46a4f019396569f760a07ab5e",
+                "url": "https://api.github.com/repos/illuminate/http/zipball/04d650e70e4fef9e2c3364b740aac1d95abc8e0e",
+                "reference": "04d650e70e4fef9e2c3364b740aac1d95abc8e0e",
                 "shasum": ""
             },
             "require": {
@@ -687,7 +687,7 @@
                 "issues": "https://github.com/laravel/framework/issues",
                 "source": "https://github.com/laravel/framework"
             },
-            "time": "2022-02-12T23:43:59+00:00"
+            "time": "2022-02-10T15:03:13+00:00"
         },
         {
             "name": "illuminate/macroable",
@@ -4198,8 +4198,6 @@
     "aliases": [],
     "minimum-stability": "dev",
     "stability-flags": {
-        "illuminate/contracts": 20,
-        "illuminate/http": 20,
         "phpstan/phpstan": 20,
         "friendsofphp/php-cs-fixer": 20
     },
