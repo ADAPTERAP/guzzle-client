@@ -2,10 +2,8 @@
 
 namespace Adapterap\GuzzleClient\Exceptions;
 
-use Throwable;
 use Adapterap\GuzzleClient\GuzzleClientResponse;
 use Symfony\Contracts\HttpClient\Exception\ClientExceptionInterface;
-use Symfony\Contracts\HttpClient\Exception\ServerExceptionInterface;
 use Symfony\Contracts\HttpClient\Exception\DecodingExceptionInterface;
 use Symfony\Contracts\HttpClient\Exception\RedirectionExceptionInterface;
 use Symfony\Contracts\HttpClient\Exception\ServerExceptionInterface;
@@ -35,11 +33,13 @@ class DecodingException extends GuzzleClientException implements DecodingExcepti
     }
 
     /**
-     * @throws ClientExceptionInterface
+     * Возвращает контекст ошибки.
+     *
+     * @return array{content: string, exception: Throwable}
+     *
      * @throws RedirectionExceptionInterface
      * @throws ServerExceptionInterface
-     *
-     * @return array
+     * @throws ClientExceptionInterface
      */
     public function context(): array
     {

@@ -46,7 +46,7 @@ class GuzzleClientResponseInfo implements Arrayable
     /**
      * An array modelled after the special $http_response_header variable.
      *
-     * @var array
+     * @var array<string, string|string[]>
      */
     public array $responseHeaders;
 
@@ -67,7 +67,7 @@ class GuzzleClientResponseInfo implements Arrayable
     /**
      * The value of the "user_data" request option, null if not set.
      *
-     * @var null|array
+     * @var null|mixed[]
      */
     public ?array $userData;
 
@@ -83,19 +83,20 @@ class GuzzleClientResponseInfo implements Arrayable
      *
      * @param string               $method
      * @param string               $url
-     * @param array                $options
+     * @param array<string, mixed> $options
      * @param PsrResponseInterface $response
      * @param CarbonInterface      $startTime
      * @param string               $content
      */
     public function __construct(
-        string $method,
-        string $url,
-        array $options,
+        string               $method,
+        string               $url,
+        array                $options,
         PsrResponseInterface $response,
-        CarbonInterface $startTime,
-        string $content
-    ) {
+        CarbonInterface      $startTime,
+        string               $content
+    )
+    {
         $this->httpCode = $response->getStatusCode();
         $this->httpMethod = $method;
         $this->responseHeaders = $response->getHeaders();
@@ -108,7 +109,18 @@ class GuzzleClientResponseInfo implements Arrayable
     /**
      * Get the instance as an array.
      *
-     * @return array
+     * @return array{
+     *     error: string|null,
+     *     httpCode: int,
+     *     httpMethod: string,
+     *     redirectCount: int,
+     *     redirectUrl: string|null,
+     *     responseHeaders: array<string, string[]|string>,
+     *     startTime: string,
+     *     url: string,
+     *     userData: null|array<mixed>,
+     *     content: string
+     * }
      */
     public function toArray(): array
     {

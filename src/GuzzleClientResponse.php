@@ -29,9 +29,9 @@ use Adapterap\GuzzleClient\Exceptions\Client\HttpTooEarlyException;
 use Adapterap\GuzzleClient\Exceptions\Client\HttpTooManyRequestsException;
 use Adapterap\GuzzleClient\Exceptions\Client\HttpUnauthorizedException;
 use Adapterap\GuzzleClient\Exceptions\Client\HttpUnavailableForLegalReasonsException;
+use Adapterap\GuzzleClient\Exceptions\Client\HttpUnprocessableEntityException;
 use Adapterap\GuzzleClient\Exceptions\Client\HttpUnsupportedMediaType;
 use Adapterap\GuzzleClient\Exceptions\Client\HttpUpgradeRequiredException;
-use Adapterap\GuzzleClient\Exceptions\Client\HttpUnprocessableEntityException;
 use Adapterap\GuzzleClient\Exceptions\ClientException;
 use Adapterap\GuzzleClient\Exceptions\DecodingException;
 use Adapterap\GuzzleClient\Exceptions\GuzzleClientException;
@@ -68,7 +68,7 @@ class GuzzleClientResponse implements ResponseInterface
     /**
      * Настройки/параметры запроса.
      *
-     * @var array
+     * @var array<string, mixed>
      */
     private array $options;
 
@@ -96,11 +96,11 @@ class GuzzleClientResponse implements ResponseInterface
     /**
      * GuzzleClientResponse constructor.
      *
-     * @param string $method
-     * @param string $url
-     * @param array $options
+     * @param string               $method
+     * @param string               $url
+     * @param array<string, mixed> $options
      * @param PsrResponseInterface $response
-     * @param CarbonInterface $startTime
+     * @param CarbonInterface      $startTime
      */
     public function __construct(
         string               $method,
@@ -169,11 +169,11 @@ class GuzzleClientResponse implements ResponseInterface
      *
      * @param bool $throw Whether an exception should be thrown on 3/4/5xx status codes
      *
-     * @return array
+     * @return mixed[]
+     *
      * @throws RedirectionExceptionInterface On a 3xx when $throw is true and the "max_redirects" option has been reached
      * @throws ClientExceptionInterface      On a 4xx when $throw is true
      * @throws ServerExceptionInterface      On a 5xx when $throw is true
-     *
      * @throws DecodingExceptionInterface    When the body cannot be decoded to an array
      */
     public function toArray(bool $throw = true): array
