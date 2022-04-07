@@ -129,6 +129,14 @@ class GuzzleClientResponse implements ResponseInterface
     }
 
     /**
+     * Gets the HTTP status text of the response.
+     */
+    public function getStatusText(): int
+    {
+        return $this->response->getReasonPhrase();
+    }
+
+    /**
      * Gets the HTTP headers of the response.
      *
      * @param bool $throw Whether an exception should be thrown on 3/4/5xx status codes
