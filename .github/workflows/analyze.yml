@@ -8,11 +8,6 @@ jobs:
       - name: "Checkout"
         uses: actions/checkout@v2
 
-      - name: Grant access to private repositories
-        uses: webfactory/ssh-agent@v0.5.2
-        with:
-          ssh-private-key: ${{ secrets.ADAPTERAP_BOT_PRIVATE_KEY }}
-
       - name: Install Dependencies via Composer
         run: composer install --no-ansi --no-interaction --no-scripts --no-suggest --no-progress --prefer-dist
 
