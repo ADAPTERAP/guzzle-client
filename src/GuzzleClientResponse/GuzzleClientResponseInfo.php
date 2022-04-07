@@ -6,6 +6,9 @@ use Carbon\CarbonInterface;
 use Illuminate\Contracts\Support\Arrayable;
 use Psr\Http\Message\ResponseInterface as PsrResponseInterface;
 
+/**
+ * @implements Arrayable<string, mixed>
+ */
 class GuzzleClientResponseInfo implements Arrayable
 {
     /**
@@ -89,14 +92,13 @@ class GuzzleClientResponseInfo implements Arrayable
      * @param string               $content
      */
     public function __construct(
-        string               $method,
-        string               $url,
-        array                $options,
+        string $method,
+        string $url,
+        array $options,
         PsrResponseInterface $response,
-        CarbonInterface      $startTime,
-        string               $content
-    )
-    {
+        CarbonInterface $startTime,
+        string $content
+    ) {
         $this->httpCode = $response->getStatusCode();
         $this->httpMethod = $method;
         $this->responseHeaders = $response->getHeaders();

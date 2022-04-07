@@ -103,13 +103,12 @@ class GuzzleClientResponse implements ResponseInterface
      * @param CarbonInterface      $startTime
      */
     public function __construct(
-        string               $method,
-        string               $url,
-        array                $options,
+        string $method,
+        string $url,
+        array $options,
         PsrResponseInterface $response,
-        CarbonInterface      $startTime
-    )
-    {
+        CarbonInterface $startTime
+    ) {
         $this->method = $method;
         $this->url = $url;
         $this->options = $options;
@@ -117,11 +116,13 @@ class GuzzleClientResponse implements ResponseInterface
         $this->startTime = $startTime;
 
         $content = $this->response->getBody()->getContents();
-        $this->content = (string)str_replace(' ', ' ', $content);
+        $this->content = (string) str_replace(' ', ' ', $content);
     }
 
     /**
      * Gets the HTTP status code of the response.
+     *
+     * @return int
      */
     public function getStatusCode(): int
     {
@@ -129,15 +130,25 @@ class GuzzleClientResponse implements ResponseInterface
     }
 
     /**
+     * Gets the HTTP status text of the response.
+     *
+     * @return string
+     */
+    public function getStatusText(): string
+    {
+        return $this->response->getReasonPhrase();
+    }
+
+    /**
      * Gets the HTTP headers of the response.
      *
      * @param bool $throw Whether an exception should be thrown on 3/4/5xx status codes
      *
-     * @return string[][] The headers of the response keyed by header names in lowercase
      * @throws ClientExceptionInterface      On a 4xx when $throw is true
      * @throws ServerExceptionInterface      On a 5xx when $throw is true
-     *
      * @throws RedirectionExceptionInterface On a 3xx when $throw is true and the "max_redirects" option has been reached
+     *
+     * @return string[][] The headers of the response keyed by header names in lowercase
      */
     public function getHeaders(bool $throw = true): array
     {
@@ -151,11 +162,11 @@ class GuzzleClientResponse implements ResponseInterface
      *
      * @param bool $throw Whether an exception should be thrown on 3/4/5xx status codes
      *
-     * @return string
      * @throws ClientExceptionInterface      On a 4xx when $throw is true
      * @throws ServerExceptionInterface      On a 5xx when $throw is true
-     *
      * @throws RedirectionExceptionInterface On a 3xx when $throw is true and the "max_redirects" option has been reached
+     *
+     * @return string
      */
     public function getContent(bool $throw = true): string
     {
@@ -169,12 +180,12 @@ class GuzzleClientResponse implements ResponseInterface
      *
      * @param bool $throw Whether an exception should be thrown on 3/4/5xx status codes
      *
-     * @return mixed[]
-     *
      * @throws RedirectionExceptionInterface On a 3xx when $throw is true and the "max_redirects" option has been reached
      * @throws ClientExceptionInterface      On a 4xx when $throw is true
      * @throws ServerExceptionInterface      On a 5xx when $throw is true
      * @throws DecodingExceptionInterface    When the body cannot be decoded to an array
+     *
+     * @return mixed[]
      */
     public function toArray(bool $throw = true): array
     {
@@ -249,7 +260,7 @@ class GuzzleClientResponse implements ResponseInterface
      *
      * @param bool $throw Whether an exception should be thrown on 3/4/5xx status codes
      *
-     * @throws GuzzleClientException|ClientExceptionInterface
+     * @throws ClientExceptionInterface|GuzzleClientException
      */
     public function throwAnExceptionIfNeed(bool $throw = true): void
     {
