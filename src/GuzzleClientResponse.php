@@ -40,9 +40,10 @@ use Adapterap\GuzzleClient\Exceptions\RedirectionException;
 use Adapterap\GuzzleClient\Exceptions\ServerException;
 use Adapterap\GuzzleClient\GuzzleClientResponse\GuzzleClientResponseInfo;
 use Carbon\CarbonInterface;
-use GuzzleHttp\Psr7\StreamWrapper;
+use GuzzleHttp\RequestOptions;
 use JsonException;
 use Psr\Http\Message\ResponseInterface as PsrResponseInterface;
+use Psr\Http\Message\StreamInterface;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Contracts\HttpClient\Exception\ClientExceptionInterface;
 use Symfony\Contracts\HttpClient\Exception\DecodingExceptionInterface;
@@ -116,6 +117,13 @@ class GuzzleClientResponse implements ResponseInterface
         $this->options = $options;
         $this->response = $response;
         $this->startTime = $startTime;
+
+        if(array_key_exists(RequestOptions::STREAM, $options)){
+            return;
+        }
+
+        $content = $this->response->getBody()->getContents();
+        $this->content = (string) str_replace(' ', ' ', $content);
     }
 
     /**
@@ -169,12 +177,6 @@ class GuzzleClientResponse implements ResponseInterface
      */
     public function getContent(bool $throw = true): string
     {
-        if (!isset($this->content)) {
-            $content = $this->response->getBody()->getContents();
-            $this->response->getBody()->close();
-            $this->content = (string)str_replace(' ', ' ', $content);
-        }
-        
         $this->throwAnExceptionIfNeed($throw);
 
         return $this->content;
@@ -185,16 +187,16 @@ class GuzzleClientResponse implements ResponseInterface
      *
      * @param bool $throw Whether an exception should be thrown on 3/4/5xx status codes
      *
-     * @return resource
+     * @return StreamInterface
      * @throws ServerExceptionInterface On a 5xx when $throw is true
      *
      * @throws ClientExceptionInterface On a 4xx when $throw is true
      */
-    public function getBody(bool $throw = true)
+    public function getBody(bool $throw = true): StreamInterface
     {
         $this->throwAnExceptionIfNeed($throw);
 
-        return StreamWrapper::getResource($this->response->getBody());
+        return $this->response->getBody();
     }
 
     /**

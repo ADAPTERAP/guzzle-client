@@ -7,7 +7,6 @@ use Carbon\Carbon;
 use GuzzleHttp\Client;
 use GuzzleHttp\Exception\GuzzleException;
 use GuzzleHttp\RequestOptions;
-use Throwable;
 
 /**
  * Class GuzzleClientRequest.
@@ -50,7 +49,7 @@ class GuzzleClientRequest
     public function __construct(string $baseUri)
     {
         $this->baseUri = $baseUri;
-        $this->client = $this->getClient();
+        $this->client  = $this->getClient();
     }
 
     /**
@@ -72,8 +71,8 @@ class GuzzleClientRequest
      * relative path to append to the base path of the client. The URL can
      * contain the query string as well.
      *
-     * @param string $url
-     * @param array<string, mixed[]> $options
+     * @param  string  $url
+     * @param  array<string, mixed[]>  $options
      *
      * @return GuzzleClientResponse|T
      *
@@ -91,8 +90,8 @@ class GuzzleClientRequest
      * relative path to append to the base path of the client. The URL can
      * contain the query string as well.
      *
-     * @param string $url
-     * @param array<string, mixed[]> $options
+     * @param  string  $url
+     * @param  array<string, mixed[]>  $options
      *
      * @return GuzzleClientResponse|T
      *
@@ -110,8 +109,8 @@ class GuzzleClientRequest
      * relative path to append to the base path of the client. The URL can
      * contain the query string as well.
      *
-     * @param string $url
-     * @param array<string, mixed[]> $options
+     * @param  string  $url
+     * @param  array<string, mixed[]>  $options
      *
      * @return GuzzleClientResponse|T
      *
@@ -129,8 +128,8 @@ class GuzzleClientRequest
      * relative path to append to the base path of the client. The URL can
      * contain the query string as well.
      *
-     * @param string $url
-     * @param array<string, mixed[]> $options
+     * @param  string  $url
+     * @param  array<string, mixed[]>  $options
      *
      * @return GuzzleClientResponse|T
      * @throws GuzzleException
@@ -147,8 +146,8 @@ class GuzzleClientRequest
      * relative path to append to the base path of the client. The URL can
      * contain the query string as well.
      *
-     * @param string $url
-     * @param array<string, mixed[]> $options
+     * @param  string  $url
+     * @param  array<string, mixed[]>  $options
      *
      * @return GuzzleClientResponse|T
      * @throws GuzzleException
@@ -165,8 +164,8 @@ class GuzzleClientRequest
      * relative path to append to the base path of the client. The URL can
      * contain the query string as well.
      *
-     * @param string $url
-     * @param array<string, mixed[]> $options
+     * @param  string  $url
+     * @param  array<string, mixed[]>  $options
      *
      * @return GuzzleClientResponse|T
      * @throws GuzzleException
@@ -182,8 +181,8 @@ class GuzzleClientRequest
      * Use an absolute path to override the base path of the client, or a
      * relative path to append to the base path of the client. The URL can
      *
-     * @param string $url
-     * @param array<string, mixed[]> $options
+     * @param  string  $url
+     * @param  array<string, mixed[]>  $options
      *
      * @return GuzzleClientResponse|T
      * @throws GuzzleException
@@ -199,8 +198,8 @@ class GuzzleClientRequest
      * Use an absolute path to override the base path of the client, or a
      * relative path to append to the base path of the client. The URL can
      *
-     * @param string $url
-     * @param array<string, mixed[]> $options
+     * @param  string  $url
+     * @param  array<string, mixed[]>  $options
      *
      * @return GuzzleClientResponse|T
      * @throws GuzzleException
@@ -223,7 +222,6 @@ class GuzzleClientRequest
      *
      * @return GuzzleClientResponse|T
      * @throws GuzzleClientException|GuzzleException
-     * @throws Throwable
      */
     public function request(string $method, string $url, array $options = []): GuzzleClientResponse
     {
@@ -244,17 +242,18 @@ class GuzzleClientRequest
                 $response,
                 $start
             );
-        } catch (Throwable $e) {
-            $response->getBody()->close();
-            
-            throw $e;
+        } finally {
+            // Закрываем соединение
+            if (!array_key_exists(RequestOptions::STREAM, $options)) {
+                $response->getBody()->close();
+            }
         }
     }
 
     /**
      * Сеттер для client.
      *
-     * @param Client $client
+     * @param  Client  $client
      *
      * @return $this
      */
@@ -273,8 +272,8 @@ class GuzzleClientRequest
     protected function getClient(): Client
     {
         return new Client([
-            'base_uri' => $this->baseUri,
-            RequestOptions::VERIFY => false,
+            'base_uri'                  => $this->baseUri,
+            RequestOptions::VERIFY      => false,
             RequestOptions::HTTP_ERRORS => false,
         ]);
     }
