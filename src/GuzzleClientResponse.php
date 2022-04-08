@@ -117,7 +117,7 @@ class GuzzleClientResponse implements ResponseInterface
         $this->response = $response;
         $this->startTime = $startTime;
 
-        if (array_key_exists(RequestOptions::STREAM, $options)) {
+        if (array_key_exists(RequestOptions::STREAM, $options) && $options[RequestOptions::STREAM] === true) {
             return;
         }
 
