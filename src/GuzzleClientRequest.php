@@ -250,7 +250,7 @@ class GuzzleClientRequest
             );
         } finally {
             // Закрываем соединение
-            if (array_key_exists(RequestOptions::STREAM, $options) && $options[RequestOptions::STREAM] === true) {
+            if (!array_key_exists(RequestOptions::STREAM, $options) || $options[RequestOptions::STREAM] === false) {
                 $response->getBody()->close();
             }
         }
