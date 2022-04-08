@@ -12,7 +12,7 @@ use Symfony\Contracts\HttpClient\Exception\ServerExceptionInterface;
 use Symfony\Contracts\HttpClient\Exception\TransportExceptionInterface;
 
 /**
- * Ошибка 422
+ * Ошибка 422.
  */
 class HttpUnprocessableEntityException extends ClientException
 {
@@ -21,12 +21,13 @@ class HttpUnprocessableEntityException extends ClientException
      *
      * @param Request $request
      *
-     * @return JsonResponse
      * @throws TransportExceptionInterface
      * @throws ClientExceptionInterface
      * @throws DecodingExceptionInterface
      * @throws RedirectionExceptionInterface
      * @throws ServerExceptionInterface
+     *
+     * @return JsonResponse
      */
     public function toResponse($request): JsonResponse
     {
