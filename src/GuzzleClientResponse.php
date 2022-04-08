@@ -98,11 +98,11 @@ class GuzzleClientResponse implements ResponseInterface
     /**
      * GuzzleClientResponse constructor.
      *
-     * @param string               $method
-     * @param string               $url
-     * @param array<string, mixed[]|bool> $options
-     * @param PsrResponseInterface $response
-     * @param CarbonInterface      $startTime
+     * @param string                      $method
+     * @param string                      $url
+     * @param array<string, bool|mixed[]> $options
+     * @param PsrResponseInterface        $response
+     * @param CarbonInterface             $startTime
      */
     public function __construct(
         string $method,
