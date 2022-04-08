@@ -100,7 +100,7 @@ class GuzzleClientResponse implements ResponseInterface
      *
      * @param string               $method
      * @param string               $url
-     * @param array<string, mixed[]|bool> $options
+     * @param array<string, mixed> $options
      * @param PsrResponseInterface $response
      * @param CarbonInterface      $startTime
      */

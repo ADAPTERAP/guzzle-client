@@ -223,7 +223,7 @@ class GuzzleClientRequest
      *
      * @param string                 $method  HTTP method
      * @param string                 $url
-     * @param array<string, mixed[]|bool> $options Request options to apply. See \GuzzleHttp\RequestOptions.
+     * @param array<string, mixed> $options Request options to apply. See \GuzzleHttp\RequestOptions.
      *
      * @throws GuzzleClientException|GuzzleException
      *
