@@ -72,7 +72,7 @@ class GuzzleClientRequest
      * contain the query string as well.
      *
      * @param string                 $url
-     * @param array<string, mixed[]> $options
+     * @param array<string, mixed> $options
      *
      * @throws GuzzleException
      *
