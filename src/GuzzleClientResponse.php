@@ -40,6 +40,7 @@ use Adapterap\GuzzleClient\Exceptions\RedirectionException;
 use Adapterap\GuzzleClient\Exceptions\ServerException;
 use Adapterap\GuzzleClient\GuzzleClientResponse\GuzzleClientResponseInfo;
 use Carbon\CarbonInterface;
+use GuzzleHttp\Psr7\StreamWrapper;
 use JsonException;
 use Psr\Http\Message\ResponseInterface as PsrResponseInterface;
 use Symfony\Component\HttpFoundation\Response;
@@ -96,27 +97,25 @@ class GuzzleClientResponse implements ResponseInterface
     /**
      * GuzzleClientResponse constructor.
      *
-     * @param string               $method
-     * @param string               $url
+     * @param string $method
+     * @param string $url
      * @param array<string, mixed> $options
      * @param PsrResponseInterface $response
-     * @param CarbonInterface      $startTime
+     * @param CarbonInterface $startTime
      */
     public function __construct(
-        string $method,
-        string $url,
-        array $options,
+        string               $method,
+        string               $url,
+        array                $options,
         PsrResponseInterface $response,
-        CarbonInterface $startTime
-    ) {
+        CarbonInterface      $startTime
+    )
+    {
         $this->method = $method;
         $this->url = $url;
         $this->options = $options;
         $this->response = $response;
         $this->startTime = $startTime;
-
-        $content = $this->response->getBody()->getContents();
-        $this->content = (string) str_replace(' ', ' ', $content);
     }
 
     /**
@@ -144,11 +143,11 @@ class GuzzleClientResponse implements ResponseInterface
      *
      * @param bool $throw Whether an exception should be thrown on 3/4/5xx status codes
      *
-     * @throws ClientExceptionInterface      On a 4xx when $throw is true
+     * @return string[][] The headers of the response keyed by header names in lowercase
      * @throws ServerExceptionInterface      On a 5xx when $throw is true
      * @throws RedirectionExceptionInterface On a 3xx when $throw is true and the "max_redirects" option has been reached
      *
-     * @return string[][] The headers of the response keyed by header names in lowercase
+     * @throws ClientExceptionInterface      On a 4xx when $throw is true
      */
     public function getHeaders(bool $throw = true): array
     {
@@ -162,17 +161,40 @@ class GuzzleClientResponse implements ResponseInterface
      *
      * @param bool $throw Whether an exception should be thrown on 3/4/5xx status codes
      *
-     * @throws ClientExceptionInterface      On a 4xx when $throw is true
+     * @return string
      * @throws ServerExceptionInterface      On a 5xx when $throw is true
      * @throws RedirectionExceptionInterface On a 3xx when $throw is true and the "max_redirects" option has been reached
      *
-     * @return string
+     * @throws ClientExceptionInterface      On a 4xx when $throw is true
      */
     public function getContent(bool $throw = true): string
     {
+        if (!isset($this->content)) {
+            $content = $this->response->getBody()->getContents();
+            $this->response->getBody()->close();
+            $this->content = (string)str_replace(' ', ' ', $content);
+        }
+        
         $this->throwAnExceptionIfNeed($throw);
 
         return $this->content;
+    }
+
+    /**
+     * Gets the response body as a stream.
+     *
+     * @param bool $throw Whether an exception should be thrown on 3/4/5xx status codes
+     *
+     * @return resource
+     * @throws ServerExceptionInterface On a 5xx when $throw is true
+     *
+     * @throws ClientExceptionInterface On a 4xx when $throw is true
+     */
+    public function getBody(bool $throw = true)
+    {
+        $this->throwAnExceptionIfNeed($throw);
+
+        return StreamWrapper::getResource($this->response->getBody());
     }
 
     /**
@@ -180,12 +202,12 @@ class GuzzleClientResponse implements ResponseInterface
      *
      * @param bool $throw Whether an exception should be thrown on 3/4/5xx status codes
      *
-     * @throws RedirectionExceptionInterface On a 3xx when $throw is true and the "max_redirects" option has been reached
+     * @return mixed[]
      * @throws ClientExceptionInterface      On a 4xx when $throw is true
      * @throws ServerExceptionInterface      On a 5xx when $throw is true
      * @throws DecodingExceptionInterface    When the body cannot be decoded to an array
      *
-     * @return mixed[]
+     * @throws RedirectionExceptionInterface On a 3xx when $throw is true and the "max_redirects" option has been reached
      */
     public function toArray(bool $throw = true): array
     {
