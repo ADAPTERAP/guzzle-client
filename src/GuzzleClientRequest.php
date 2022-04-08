@@ -26,7 +26,7 @@ class GuzzleClientRequest
     /**
      * Имя класса, который будет обрабатывать ответ от сервера.
      *
-     * @var string|class-string<T>
+     * @var class-string<T>|string
      */
     protected string $responseClassName;
 
@@ -72,12 +72,12 @@ class GuzzleClientRequest
      * relative path to append to the base path of the client. The URL can
      * contain the query string as well.
      *
-     * @param string $url
+     * @param string                 $url
      * @param array<string, mixed[]> $options
      *
-     * @return GuzzleClientResponse|T
-     *
      * @throws GuzzleException
+     *
+     * @return GuzzleClientResponse|T
      */
     public function get(string $url, array $options = []): GuzzleClientResponse
     {
@@ -91,12 +91,12 @@ class GuzzleClientRequest
      * relative path to append to the base path of the client. The URL can
      * contain the query string as well.
      *
-     * @param string $url
+     * @param string                 $url
      * @param array<string, mixed[]> $options
      *
-     * @return GuzzleClientResponse|T
-     *
      * @throws GuzzleException
+     *
+     * @return GuzzleClientResponse|T
      */
     public function post(string $url, array $options = []): GuzzleClientResponse
     {
@@ -110,12 +110,12 @@ class GuzzleClientRequest
      * relative path to append to the base path of the client. The URL can
      * contain the query string as well.
      *
-     * @param string $url
+     * @param string                 $url
      * @param array<string, mixed[]> $options
      *
-     * @return GuzzleClientResponse|T
-     *
      * @throws GuzzleException
+     *
+     * @return GuzzleClientResponse|T
      */
     public function put(string $url, array $options = []): GuzzleClientResponse
     {
@@ -129,11 +129,12 @@ class GuzzleClientRequest
      * relative path to append to the base path of the client. The URL can
      * contain the query string as well.
      *
-     * @param string $url
+     * @param string                 $url
      * @param array<string, mixed[]> $options
      *
-     * @return GuzzleClientResponse|T
      * @throws GuzzleException
+     *
+     * @return GuzzleClientResponse|T
      */
     public function delete(string $url, array $options = []): GuzzleClientResponse
     {
@@ -147,11 +148,12 @@ class GuzzleClientRequest
      * relative path to append to the base path of the client. The URL can
      * contain the query string as well.
      *
-     * @param string $url
+     * @param string                 $url
      * @param array<string, mixed[]> $options
      *
-     * @return GuzzleClientResponse|T
      * @throws GuzzleException
+     *
+     * @return GuzzleClientResponse|T
      */
     public function patch(string $url, array $options = []): GuzzleClientResponse
     {
@@ -165,11 +167,12 @@ class GuzzleClientRequest
      * relative path to append to the base path of the client. The URL can
      * contain the query string as well.
      *
-     * @param string $url
+     * @param string                 $url
      * @param array<string, mixed[]> $options
      *
-     * @return GuzzleClientResponse|T
      * @throws GuzzleException
+     *
+     * @return GuzzleClientResponse|T
      */
     public function head(string $url, array $options = []): GuzzleClientResponse
     {
@@ -182,11 +185,12 @@ class GuzzleClientRequest
      * Use an absolute path to override the base path of the client, or a
      * relative path to append to the base path of the client. The URL can
      *
-     * @param string $url
+     * @param string                 $url
      * @param array<string, mixed[]> $options
      *
-     * @return GuzzleClientResponse|T
      * @throws GuzzleException
+     *
+     * @return GuzzleClientResponse|T
      */
     public function connect(string $url, array $options = []): GuzzleClientResponse
     {
@@ -199,11 +203,12 @@ class GuzzleClientRequest
      * Use an absolute path to override the base path of the client, or a
      * relative path to append to the base path of the client. The URL can
      *
-     * @param string $url
+     * @param string                 $url
      * @param array<string, mixed[]> $options
      *
-     * @return GuzzleClientResponse|T
      * @throws GuzzleException
+     *
+     * @return GuzzleClientResponse|T
      */
     public function options(string $url, array $options = []): GuzzleClientResponse
     {
@@ -217,13 +222,14 @@ class GuzzleClientRequest
      * relative path to append to the base path of the client. The URL can
      * contain the query string as well.
      *
-     * @param  string  $method  HTTP method.
-     * @param  string  $url
-     * @param  array<string, mixed[]>  $options  Request options to apply. See \GuzzleHttp\RequestOptions.
+     * @param string                 $method  HTTP method
+     * @param string                 $url
+     * @param array<string, mixed[]> $options Request options to apply. See \GuzzleHttp\RequestOptions.
      *
-     * @return GuzzleClientResponse|T
      * @throws GuzzleClientException|GuzzleException
      * @throws Throwable
+     *
+     * @return GuzzleClientResponse|T
      */
     public function request(string $method, string $url, array $options = []): GuzzleClientResponse
     {
@@ -246,7 +252,7 @@ class GuzzleClientRequest
             );
         } catch (Throwable $e) {
             $response->getBody()->close();
-            
+
             throw $e;
         }
     }

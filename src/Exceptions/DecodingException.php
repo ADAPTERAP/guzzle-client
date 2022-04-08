@@ -35,11 +35,11 @@ class DecodingException extends GuzzleClientException implements DecodingExcepti
     /**
      * Возвращает контекст ошибки.
      *
-     * @return array{content: string, exception: Throwable}
-     *
      * @throws RedirectionExceptionInterface
      * @throws ServerExceptionInterface
      * @throws ClientExceptionInterface
+     *
+     * @return array{content: string, exception: Throwable}
      */
     public function context(): array
     {
