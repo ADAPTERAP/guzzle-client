@@ -71,8 +71,8 @@ class GuzzleClientRequest
      * relative path to append to the base path of the client. The URL can
      * contain the query string as well.
      *
-     * @param string                 $url
-     * @param array<string, mixed[]> $options
+     * @param string               $url
+     * @param array<string, mixed> $options
      *
      * @throws GuzzleException
      *
@@ -221,9 +221,9 @@ class GuzzleClientRequest
      * relative path to append to the base path of the client. The URL can
      * contain the query string as well.
      *
-     * @param string                      $method  HTTP method
-     * @param string                      $url
-     * @param array<string, bool|mixed[]> $options Request options to apply. See \GuzzleHttp\RequestOptions.
+     * @param string               $method  HTTP method
+     * @param string               $url
+     * @param array<string, mixed> $options Request options to apply. See \GuzzleHttp\RequestOptions.
      *
      * @throws GuzzleClientException|GuzzleException
      *
