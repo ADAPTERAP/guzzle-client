@@ -5,7 +5,7 @@ namespace Adapterap\GuzzleClient\Exceptions\Client;
 use Adapterap\GuzzleClient\Exceptions\ClientException;
 
 /**
- * Ошибка 405
+ * Ошибка 405.
  */
 class HttpMethodNotAllowedException extends ClientException
 {

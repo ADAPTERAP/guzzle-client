@@ -27,7 +27,7 @@ abstract class GuzzleClientException extends RuntimeException implements Respons
      * GuzzleClientException constructor.
      *
      * @param GuzzleClientResponse $response
-     * @param null|string $message
+     * @param null|string          $message
      */
     public function __construct(GuzzleClientResponse $response, ?string $message = null)
     {
