@@ -37,6 +37,24 @@ use Adapterap\GuzzleClient\Exceptions\DecodingException;
 use Adapterap\GuzzleClient\Exceptions\GuzzleClientException;
 use Adapterap\GuzzleClient\Exceptions\MethodNotSupportedException;
 use Adapterap\GuzzleClient\Exceptions\RedirectionException;
+use Adapterap\GuzzleClient\Exceptions\Server\HttpATimeoutOccurredException;
+use Adapterap\GuzzleClient\Exceptions\Server\HttpBadGatewayException;
+use Adapterap\GuzzleClient\Exceptions\Server\HttpBandwidthLimitExceededException;
+use Adapterap\GuzzleClient\Exceptions\Server\HttpConnectionTimedOutException;
+use Adapterap\GuzzleClient\Exceptions\Server\HttpGatewayTimeoutException;
+use Adapterap\GuzzleClient\Exceptions\Server\HttpInsufficientStorageException;
+use Adapterap\GuzzleClient\Exceptions\Server\HttpInvalidSslCertificateException;
+use Adapterap\GuzzleClient\Exceptions\Server\HttpLoopDetectedException;
+use Adapterap\GuzzleClient\Exceptions\Server\HttpNetworkAuthenticationRequiredException;
+use Adapterap\GuzzleClient\Exceptions\Server\HttpNotExtendedException;
+use Adapterap\GuzzleClient\Exceptions\Server\HttpNotImplementedException;
+use Adapterap\GuzzleClient\Exceptions\Server\HttpOriginIsUnreachableException;
+use Adapterap\GuzzleClient\Exceptions\Server\HttpServiceUnavailableException;
+use Adapterap\GuzzleClient\Exceptions\Server\HttpSslHandshakeFailedException;
+use Adapterap\GuzzleClient\Exceptions\Server\HttpUnknownErrorException;
+use Adapterap\GuzzleClient\Exceptions\Server\HttpVariantAlsoNegotiatesExperimentalException;
+use Adapterap\GuzzleClient\Exceptions\Server\HttpVersionNotSupportedException;
+use Adapterap\GuzzleClient\Exceptions\Server\HttpWebServerIsDownException;
 use Adapterap\GuzzleClient\Exceptions\ServerException;
 use Adapterap\GuzzleClient\GuzzleClientResponse\GuzzleClientResponseInfo;
 use Carbon\CarbonInterface;
@@ -350,6 +368,42 @@ class GuzzleClientResponse implements ResponseInterface
                     throw new HttpRequestHeaderFieldsTooLargeException($this);
                 case Response::HTTP_UNAVAILABLE_FOR_LEGAL_REASONS:
                     throw new HttpUnavailableForLegalReasonsException($this);
+                case Response::HTTP_NOT_IMPLEMENTED:
+                    throw new HttpNotImplementedException($this);
+                case Response::HTTP_BAD_GATEWAY:
+                    throw new HttpBadGatewayException($this);
+                case Response::HTTP_SERVICE_UNAVAILABLE:
+                    throw new HttpServiceUnavailableException($this);
+                case Response::HTTP_GATEWAY_TIMEOUT:
+                    throw new HttpGatewayTimeoutException($this);
+                case Response::HTTP_VERSION_NOT_SUPPORTED:
+                    throw new HttpVersionNotSupportedException($this);
+                case Response::HTTP_VARIANT_ALSO_NEGOTIATES_EXPERIMENTAL:
+                    throw new HttpVariantAlsoNegotiatesExperimentalException($this);
+                case Response::HTTP_INSUFFICIENT_STORAGE:
+                    throw new HttpInsufficientStorageException($this);
+                case Response::HTTP_LOOP_DETECTED:
+                    throw new HttpLoopDetectedException($this);
+                case 509:
+                    throw new HttpBandwidthLimitExceededException($this);
+                case Response::HTTP_NOT_EXTENDED:
+                    throw new HttpNotExtendedException($this);
+                case Response::HTTP_NETWORK_AUTHENTICATION_REQUIRED:
+                    throw new HttpNetworkAuthenticationRequiredException($this);
+                case 520:
+                    throw new HttpUnknownErrorException($this);
+                case 521:
+                    throw new HttpWebServerIsDownException($this);
+                case 522:
+                    throw new HttpConnectionTimedOutException($this);
+                case 523:
+                    throw new HttpOriginIsUnreachableException($this);
+                case 524:
+                    throw new HttpATimeoutOccurredException($this);
+                case 525:
+                    throw new HttpSslHandshakeFailedException($this);
+                case 526:
+                    throw new HttpInvalidSslCertificateException($this);
             }
         }
 
