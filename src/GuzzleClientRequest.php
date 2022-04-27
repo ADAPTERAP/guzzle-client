@@ -2,11 +2,15 @@
 
 namespace Adapterap\GuzzleClient;
 
-use Adapterap\GuzzleClient\Exceptions\GuzzleClientException;
 use Carbon\Carbon;
 use GuzzleHttp\Client;
 use GuzzleHttp\Exception\GuzzleException;
 use GuzzleHttp\RequestOptions;
+use Illuminate\Support\Facades\Log;
+use Symfony\Contracts\HttpClient\Exception\ClientExceptionInterface;
+use Symfony\Contracts\HttpClient\Exception\RedirectionExceptionInterface;
+use Symfony\Contracts\HttpClient\Exception\ServerExceptionInterface;
+use Throwable;
 
 /**
  * Class GuzzleClientRequest.
@@ -42,6 +46,13 @@ class GuzzleClientRequest
      * @var string
      */
     protected string $baseUri;
+
+    /**
+     * True, если включен режим отладки.
+     *
+     * @var bool
+     */
+    protected bool $debug = false;
 
     /**
      * GuzzleClientRequest constructor.
@@ -225,7 +236,11 @@ class GuzzleClientRequest
      * @param string               $url
      * @param array<string, mixed> $options Request options to apply. See \GuzzleHttp\RequestOptions.
      *
-     * @throws GuzzleClientException|GuzzleException
+     * @throws GuzzleException
+     * @throws Throwable
+     * @throws ClientExceptionInterface
+     * @throws RedirectionExceptionInterface
+     * @throws ServerExceptionInterface
      *
      * @return GuzzleClientResponse|T
      */
@@ -241,13 +256,53 @@ class GuzzleClientRequest
         $response = $this->client->request($method, $url, $options);
 
         try {
-            return new $this->responseClassName(
+            /** @var GuzzleClientResponse $result */
+            $result = new $this->responseClassName(
                 $method,
                 $url,
                 $options,
                 $response,
                 $start
             );
+
+            if ($this->debug) {
+                Log::debug(static::class . ' debug', [
+                    'request' => [
+                        'base_uri' => $this->baseUri,
+                        'path' => $url,
+                        'method' => $method,
+                        'options' => $options,
+                    ],
+                    'response' => [
+                        'status' => $result->getStatusCode(),
+                        'headers' => $result->getHeaders(),
+                        'content' => $result->getBody(false),
+                        'metadata' => $response->getBody()->getMetadata(),
+                    ],
+                ]);
+            }
+
+            return $result;
+        } catch (Throwable $throwable) {
+            if ($this->debug) {
+                Log::debug(static::class . ' debug', [
+                    'request' => [
+                        'base_uri' => $this->baseUri,
+                        'path' => $url,
+                        'method' => $method,
+                        'options' => $options,
+                    ],
+                    'response' => [
+                        'status' => $response->getStatusCode(),
+                        'headers' => $response->getHeaders(),
+                        'content' => $response->getBody()->getContents(),
+                        'metadata' => $response->getBody()->getMetadata(),
+                    ],
+                    'exception' => $throwable,
+                ]);
+            }
+
+            throw $throwable;
         } finally {
             // Закрываем соединение
             if (!array_key_exists(RequestOptions::STREAM, $options) || $options[RequestOptions::STREAM] === false) {
@@ -266,6 +321,20 @@ class GuzzleClientRequest
     public function setClient(Client $client): GuzzleClientRequest
     {
         $this->client = $client;
+
+        return $this;
+    }
+
+    /**
+     * Включает/отключает режим отладки.
+     *
+     * @param bool $value
+     *
+     * @return $this
+     */
+    public function enableDebug(bool $value): GuzzleClientRequest
+    {
+        $this->debug = $value;
 
         return $this;
     }
