@@ -36,6 +36,15 @@ use Adapterap\GuzzleClient\Exceptions\ClientException;
 use Adapterap\GuzzleClient\Exceptions\DecodingException;
 use Adapterap\GuzzleClient\Exceptions\GuzzleClientException;
 use Adapterap\GuzzleClient\Exceptions\MethodNotSupportedException;
+use Adapterap\GuzzleClient\Exceptions\Redirect\HttpMovedPermanentlyException;
+use Adapterap\GuzzleClient\Exceptions\Redirect\HttpMovedTemporarilyException;
+use Adapterap\GuzzleClient\Exceptions\Redirect\HttpMultipleChoicesException;
+use Adapterap\GuzzleClient\Exceptions\Redirect\HttpNotModifiedException;
+use Adapterap\GuzzleClient\Exceptions\Redirect\HttpPermanentRedirectException;
+use Adapterap\GuzzleClient\Exceptions\Redirect\HttpReservedException;
+use Adapterap\GuzzleClient\Exceptions\Redirect\HttpSeeOtherException;
+use Adapterap\GuzzleClient\Exceptions\Redirect\HttpTemporaryRedirectException;
+use Adapterap\GuzzleClient\Exceptions\Redirect\HttpUseProxyException;
 use Adapterap\GuzzleClient\Exceptions\RedirectionException;
 use Adapterap\GuzzleClient\Exceptions\Server\HttpATimeoutOccurredException;
 use Adapterap\GuzzleClient\Exceptions\Server\HttpBadGatewayException;
@@ -43,6 +52,7 @@ use Adapterap\GuzzleClient\Exceptions\Server\HttpBandwidthLimitExceededException
 use Adapterap\GuzzleClient\Exceptions\Server\HttpConnectionTimedOutException;
 use Adapterap\GuzzleClient\Exceptions\Server\HttpGatewayTimeoutException;
 use Adapterap\GuzzleClient\Exceptions\Server\HttpInsufficientStorageException;
+use Adapterap\GuzzleClient\Exceptions\Server\HttpInternalServerErrorException;
 use Adapterap\GuzzleClient\Exceptions\Server\HttpInvalidSslCertificateException;
 use Adapterap\GuzzleClient\Exceptions\Server\HttpLoopDetectedException;
 use Adapterap\GuzzleClient\Exceptions\Server\HttpNetworkAuthenticationRequiredException;
@@ -368,6 +378,28 @@ class GuzzleClientResponse implements ResponseInterface
                     throw new HttpRequestHeaderFieldsTooLargeException($this);
                 case Response::HTTP_UNAVAILABLE_FOR_LEGAL_REASONS:
                     throw new HttpUnavailableForLegalReasonsException($this);
+
+                case Response::HTTP_MULTIPLE_CHOICES:
+                    throw new HttpMultipleChoicesException($this);
+                case Response::HTTP_MOVED_PERMANENTLY:
+                    throw new HttpMovedPermanentlyException($this);
+                case Response::HTTP_FOUND:
+                    throw new HttpMovedTemporarilyException($this);
+                case Response::HTTP_SEE_OTHER:
+                    throw new HttpSeeOtherException($this);
+                case Response::HTTP_NOT_MODIFIED:
+                    throw new HttpNotModifiedException($this);
+                case Response::HTTP_USE_PROXY:
+                    throw new HttpUseProxyException($this);
+                case Response::HTTP_RESERVED:
+                    throw new HttpReservedException($this);
+                case Response::HTTP_TEMPORARY_REDIRECT:
+                    throw new HttpTemporaryRedirectException($this);
+                case Response::HTTP_PERMANENTLY_REDIRECT:
+                    throw new HttpPermanentRedirectException($this);
+
+                case Response::HTTP_INTERNAL_SERVER_ERROR:
+                    throw new HttpInternalServerErrorException($this);
                 case Response::HTTP_NOT_IMPLEMENTED:
                     throw new HttpNotImplementedException($this);
                 case Response::HTTP_BAD_GATEWAY:
