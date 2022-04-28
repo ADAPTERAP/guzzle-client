@@ -2,11 +2,13 @@
 
 namespace Adapterap\GuzzleClient;
 
+use Adapterap\GuzzleClient\Exceptions\GuzzleClientException;
 use Carbon\Carbon;
 use GuzzleHttp\Client;
 use GuzzleHttp\Exception\GuzzleException;
 use GuzzleHttp\RequestOptions;
 use Illuminate\Support\Facades\Log;
+use Psr\Http\Message\ResponseInterface;
 use Symfony\Contracts\HttpClient\Exception\ClientExceptionInterface;
 use Symfony\Contracts\HttpClient\Exception\RedirectionExceptionInterface;
 use Symfony\Contracts\HttpClient\Exception\ServerExceptionInterface;
@@ -265,42 +267,15 @@ class GuzzleClientRequest
                 $start
             );
 
-            if ($this->debug) {
-                Log::debug(static::class . ' debug', [
-                    'request' => [
-                        'base_uri' => $this->baseUri,
-                        'path' => $url,
-                        'method' => $method,
-                        'options' => $options,
-                    ],
-                    'response' => [
-                        'status' => $result->getStatusCode(),
-                        'headers' => $result->getHeaders(),
-                        'content' => $result->getBody(false),
-                        'metadata' => $response->getBody()->getMetadata(),
-                    ],
-                ]);
-            }
+            $this->logging($url, $method, $options, $response, $result);
 
             return $result;
+        } catch (GuzzleClientException $exception) {
+            $this->logging($url, $method, $options, $response, $exception->getResponse());
+
+            throw $exception;
         } catch (Throwable $throwable) {
-            if ($this->debug) {
-                Log::debug(static::class . ' debug', [
-                    'request' => [
-                        'base_uri' => $this->baseUri,
-                        'path' => $url,
-                        'method' => $method,
-                        'options' => $options,
-                    ],
-                    'response' => [
-                        'status' => $response->getStatusCode(),
-                        'headers' => $response->getHeaders(),
-                        'content' => $response->getBody()->getContents(),
-                        'metadata' => $response->getBody()->getMetadata(),
-                    ],
-                    'exception' => $throwable,
-                ]);
-            }
+            $this->logging($url, $method, $options, $response);
 
             throw $throwable;
         } finally {
@@ -350,6 +325,51 @@ class GuzzleClientRequest
             'base_uri' => $this->baseUri,
             RequestOptions::VERIFY => false,
             RequestOptions::HTTP_ERRORS => false,
+        ]);
+    }
+
+    /**
+     * Логирует запрос и ответ.
+     *
+     * @param string                    $url
+     * @param string                    $method
+     * @param array                     $options
+     * @param ResponseInterface         $originalResponse
+     * @param null|GuzzleClientResponse $response
+     *
+     * @throws ClientExceptionInterface
+     * @throws RedirectionExceptionInterface
+     * @throws ServerExceptionInterface
+     */
+    private function logging(
+        string $url,
+        string $method,
+        array $options,
+        ResponseInterface $originalResponse,
+        ?GuzzleClientResponse $response = null
+    ): void {
+        if ($this->debug === false) {
+            return;
+        }
+
+        Log::debug(static::class . ' debug', [
+            'request' => [
+                'base_uri' => $this->baseUri,
+                'path' => $url,
+                'method' => $method,
+                'options' => $options,
+            ],
+            'response' => [
+                'status' => $response
+                    ? $response->getStatusCode()
+                    : $originalResponse->getStatusCode(),
+                'headers' => $response
+                    ? $response->getHeaders(false)
+                    : $originalResponse->getHeaders(),
+                'content' => $response
+                    ? $response->getContent(false)
+                    : (string) $originalResponse->getBody()->getContents(),
+            ],
         ]);
     }
 }
