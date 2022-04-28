@@ -236,7 +236,7 @@ class GuzzleClientRequest
      * relative path to append to the base path of the client. The URL can
      * contain the query string as well.
      *
-     * @param string               $method HTTP method
+     * @param string               $method  HTTP method
      * @param string               $url
      * @param array<string, mixed> $options Request options to apply. See \GuzzleHttp\RequestOptions.
      *
@@ -345,13 +345,12 @@ class GuzzleClientRequest
      * @throws TransportExceptionInterface
      */
     private function logging(
-        string               $url,
-        string               $method,
-        array                $options,
+        string $url,
+        string $method,
+        array $options,
         PsrResponseInterface $originalResponse,
-                             $response = null
-    ): void
-    {
+        $response = null
+    ): void {
         if ($this->debug === false) {
             return;
         }
@@ -372,7 +371,7 @@ class GuzzleClientRequest
                     : $originalResponse->getHeaders(),
                 'content' => $response
                     ? $response->getContent(false)
-                    : (string)$originalResponse->getBody()->getContents(),
+                    : (string) $originalResponse->getBody()->getContents(),
             ],
         ]);
     }
