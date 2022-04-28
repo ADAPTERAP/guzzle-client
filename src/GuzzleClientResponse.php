@@ -34,7 +34,6 @@ use Adapterap\GuzzleClient\Exceptions\Client\HttpUnsupportedMediaType;
 use Adapterap\GuzzleClient\Exceptions\Client\HttpUpgradeRequiredException;
 use Adapterap\GuzzleClient\Exceptions\ClientException;
 use Adapterap\GuzzleClient\Exceptions\DecodingException;
-use Adapterap\GuzzleClient\Exceptions\GuzzleClientException;
 use Adapterap\GuzzleClient\Exceptions\MethodNotSupportedException;
 use Adapterap\GuzzleClient\Exceptions\Redirect\HttpMovedPermanentlyException;
 use Adapterap\GuzzleClient\Exceptions\Redirect\HttpMovedTemporarilyException;
@@ -144,10 +143,6 @@ class GuzzleClientResponse implements ResponseInterface
         $this->options = $options;
         $this->response = $response;
         $this->startTime = $startTime;
-
-        if (array_key_exists(RequestOptions::STREAM, $options) && $options[RequestOptions::STREAM] === true) {
-            return;
-        }
     }
 
     /**
@@ -201,11 +196,6 @@ class GuzzleClientResponse implements ResponseInterface
      */
     public function getContent(bool $throw = true): string
     {
-        if (isset($this->content) === false) {
-            $content = $this->response->getBody()->getContents();
-            $this->content = (string) str_replace(' ', ' ', $content);
-        }
-
         $this->throwAnExceptionIfNeed($throw);
 
         return $this->content;
@@ -216,8 +206,10 @@ class GuzzleClientResponse implements ResponseInterface
      *
      * @param bool $throw Whether an exception should be thrown on 3/4/5xx status codes
      *
-     * @throws ServerExceptionInterface On a 5xx when $throw is true
-     * @throws ClientExceptionInterface On a 4xx when $throw is true
+     * @throws ClientExceptionInterface      On a 4xx when $throw is true
+     * @throws DecodingExceptionInterface
+     * @throws RedirectionExceptionInterface
+     * @throws ServerExceptionInterface      On a 5xx when $throw is true
      *
      * @return StreamInterface
      */
@@ -287,23 +279,23 @@ class GuzzleClientResponse implements ResponseInterface
      *
      * Other info SHOULD be named after curl_getinfo()'s associative return value.
      *
+     * @param null|string $type
+     *
+     * @throws ClientExceptionInterface
+     * @throws RedirectionExceptionInterface
+     * @throws ServerExceptionInterface
      * @return null|array|GuzzleClientResponseInfo|mixed An array of all available info, or one of them when $type is
      *                                                   provided, or null when an unsupported type is requested
      */
     public function getInfo(string $type = null)
     {
-        if (isset($this->content) === false) {
-            $content = $this->response->getBody()->getContents();
-            $this->content = (string) str_replace(' ', ' ', $content);
-        }
-
         $result = new GuzzleClientResponseInfo(
             $this->method,
             $this->url,
             $this->options,
             $this->response,
             $this->startTime,
-            $this->content
+            $this->getContent()
         );
 
         if ($type) {
@@ -314,11 +306,46 @@ class GuzzleClientResponse implements ResponseInterface
     }
 
     /**
+     * Вычитывает все содержимое из стрима.
+     */
+    public function readContentsFromStream(): void
+    {
+        if (isset($this->content) === false) {
+            $content = $this->response->getBody()->getContents();
+            $this->content = (string) str_replace(' ', ' ', $content);
+        }
+    }
+
+    /**
+     * True, если содержимое передается в потоке.
+     *
+     * @return bool
+     */
+    public function isStream(): bool
+    {
+        return array_key_exists(RequestOptions::STREAM, $this->options)
+            && $this->options[RequestOptions::STREAM] === true;
+    }
+
+    /**
+     * Закрывает стрим.
+     */
+    public function closeStream(): void
+    {
+        $this->readContentsFromStream();
+
+        $this->response->getBody()->close();
+    }
+
+    /**
      * Проверяет HTTP код и если разработчик просит бросить исключение - выбрасывает.
      *
      * @param bool $throw Whether an exception should be thrown on 3/4/5xx status codes
      *
-     * @throws ClientExceptionInterface|GuzzleClientException
+     * @throws ClientExceptionInterface
+     * @throws DecodingExceptionInterface
+     * @throws RedirectionExceptionInterface
+     * @throws ServerExceptionInterface
      */
     public function throwAnExceptionIfNeed(bool $throw = true): void
     {
@@ -404,7 +431,7 @@ class GuzzleClientResponse implements ResponseInterface
                     throw new HttpRequestHeaderFieldsTooLargeException($this);
                 case Response::HTTP_UNAVAILABLE_FOR_LEGAL_REASONS:
                     throw new HttpUnavailableForLegalReasonsException($this);
-                    // 5xx
+                // 5xx
                 case Response::HTTP_INTERNAL_SERVER_ERROR:
                     throw new HttpInternalServerErrorException($this);
                 case Response::HTTP_NOT_IMPLEMENTED:
