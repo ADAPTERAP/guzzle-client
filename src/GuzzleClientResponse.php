@@ -292,6 +292,11 @@ class GuzzleClientResponse implements ResponseInterface
      */
     public function getInfo(string $type = null)
     {
+        if (isset($this->content) === false) {
+            $content = $this->response->getBody()->getContents();
+            $this->content = (string) str_replace(' ', ' ', $content);
+        }
+
         $result = new GuzzleClientResponseInfo(
             $this->method,
             $this->url,
