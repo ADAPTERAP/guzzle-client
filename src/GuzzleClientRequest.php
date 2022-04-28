@@ -8,10 +8,12 @@ use GuzzleHttp\Client;
 use GuzzleHttp\Exception\GuzzleException;
 use GuzzleHttp\RequestOptions;
 use Illuminate\Support\Facades\Log;
-use Psr\Http\Message\ResponseInterface;
+use Psr\Http\Message\ResponseInterface as PsrResponseInterface;
 use Symfony\Contracts\HttpClient\Exception\ClientExceptionInterface;
 use Symfony\Contracts\HttpClient\Exception\RedirectionExceptionInterface;
 use Symfony\Contracts\HttpClient\Exception\ServerExceptionInterface;
+use Symfony\Contracts\HttpClient\Exception\TransportExceptionInterface;
+use Symfony\Contracts\HttpClient\ResponseInterface as SymfonyResponseInterface;
 use Throwable;
 
 /**
@@ -234,7 +236,7 @@ class GuzzleClientRequest
      * relative path to append to the base path of the client. The URL can
      * contain the query string as well.
      *
-     * @param string               $method  HTTP method
+     * @param string               $method HTTP method
      * @param string               $url
      * @param array<string, mixed> $options Request options to apply. See \GuzzleHttp\RequestOptions.
      *
@@ -331,23 +333,25 @@ class GuzzleClientRequest
     /**
      * Логирует запрос и ответ.
      *
-     * @param string                    $url
-     * @param string                    $method
-     * @param array                     $options
-     * @param ResponseInterface         $originalResponse
-     * @param null|GuzzleClientResponse $response
+     * @param string                                             $url
+     * @param string                                             $method
+     * @param mixed[]                                            $options
+     * @param PsrResponseInterface                               $originalResponse
+     * @param null|GuzzleClientResponse|SymfonyResponseInterface $response
      *
      * @throws ClientExceptionInterface
      * @throws RedirectionExceptionInterface
      * @throws ServerExceptionInterface
+     * @throws TransportExceptionInterface
      */
     private function logging(
-        string $url,
-        string $method,
-        array $options,
-        ResponseInterface $originalResponse,
-        ?GuzzleClientResponse $response = null
-    ): void {
+        string               $url,
+        string               $method,
+        array                $options,
+        PsrResponseInterface $originalResponse,
+                             $response = null
+    ): void
+    {
         if ($this->debug === false) {
             return;
         }
@@ -368,7 +372,7 @@ class GuzzleClientRequest
                     : $originalResponse->getHeaders(),
                 'content' => $response
                     ? $response->getContent(false)
-                    : (string) $originalResponse->getBody()->getContents(),
+                    : (string)$originalResponse->getBody()->getContents(),
             ],
         ]);
     }
