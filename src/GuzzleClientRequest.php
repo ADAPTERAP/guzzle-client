@@ -56,7 +56,7 @@ class GuzzleClientRequest
      *
      * @var bool
      */
-    protected bool $debug = false;
+    protected static bool $debug = false;
 
     /**
      * GuzzleClientRequest constructor.
@@ -271,6 +271,10 @@ class GuzzleClientRequest
 
             $this->logging($url, $method, $options, $response, $result);
 
+            if ($result->isStream() === false) {
+                $result->readContentsFromStream();
+            }
+
             return $result;
         } catch (GuzzleClientException $exception) {
             $this->logging($url, $method, $options, $response, $exception->getResponse());
@@ -282,7 +286,7 @@ class GuzzleClientRequest
             throw $throwable;
         } finally {
             // Закрываем соединение
-            if (!array_key_exists(RequestOptions::STREAM, $options) || $options[RequestOptions::STREAM] === false) {
+            if (!array_key_exists(RequestOptions::STREAM, $options) || $options[RequestOptions::STREAM] !== true) {
                 $response->getBody()->close();
             }
         }
@@ -308,12 +312,24 @@ class GuzzleClientRequest
      * @param bool $value
      *
      * @return $this
+     *
+     * @deprecated
      */
-    public function enableDebug(bool $value): GuzzleClientRequest
+    public function enableDebug(bool $value): self
     {
-        $this->debug = $value;
+        self::debug($value);
 
         return $this;
+    }
+
+    /**
+     * Включает/отключает режим отладки.
+     *
+     * @param bool $value
+     */
+    public static function debug(bool $value = true): void
+    {
+        self::$debug = $value;
     }
 
     /**
@@ -351,7 +367,7 @@ class GuzzleClientRequest
         PsrResponseInterface $originalResponse,
         $response = null
     ): void {
-        if ($this->debug === false) {
+        if (self::$debug === false) {
             return;
         }
 
