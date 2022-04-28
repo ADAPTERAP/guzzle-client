@@ -148,9 +148,6 @@ class GuzzleClientResponse implements ResponseInterface
         if (array_key_exists(RequestOptions::STREAM, $options) && $options[RequestOptions::STREAM] === true) {
             return;
         }
-
-        $content = $this->response->getBody()->getContents();
-        $this->content = (string) str_replace(' ', ' ', $content);
     }
 
     /**
@@ -204,6 +201,11 @@ class GuzzleClientResponse implements ResponseInterface
      */
     public function getContent(bool $throw = true): string
     {
+        if (isset($this->content) === false) {
+            $content = $this->response->getBody()->getContents();
+            $this->content = (string) str_replace(' ', ' ', $content);
+        }
+
         $this->throwAnExceptionIfNeed($throw);
 
         return $this->content;
@@ -317,6 +319,25 @@ class GuzzleClientResponse implements ResponseInterface
     {
         if ($throw) {
             switch ($this->getStatusCode()) {
+                // 3xx
+                case Response::HTTP_MULTIPLE_CHOICES:
+                    throw new HttpMultipleChoicesException($this);
+                case Response::HTTP_MOVED_PERMANENTLY:
+                    throw new HttpMovedPermanentlyException($this);
+                case Response::HTTP_FOUND:
+                    throw new HttpMovedTemporarilyException($this);
+                case Response::HTTP_SEE_OTHER:
+                    throw new HttpSeeOtherException($this);
+                case Response::HTTP_NOT_MODIFIED:
+                    throw new HttpNotModifiedException($this);
+                case Response::HTTP_USE_PROXY:
+                    throw new HttpUseProxyException($this);
+                case Response::HTTP_RESERVED:
+                    throw new HttpReservedException($this);
+                case Response::HTTP_TEMPORARY_REDIRECT:
+                    throw new HttpTemporaryRedirectException($this);
+                case Response::HTTP_PERMANENTLY_REDIRECT:
+                    throw new HttpPermanentRedirectException($this);
                 // 4xx
                 case Response::HTTP_BAD_REQUEST:
                     throw new HttpBadRequestException($this);
@@ -378,26 +399,7 @@ class GuzzleClientResponse implements ResponseInterface
                     throw new HttpRequestHeaderFieldsTooLargeException($this);
                 case Response::HTTP_UNAVAILABLE_FOR_LEGAL_REASONS:
                     throw new HttpUnavailableForLegalReasonsException($this);
-
-                case Response::HTTP_MULTIPLE_CHOICES:
-                    throw new HttpMultipleChoicesException($this);
-                case Response::HTTP_MOVED_PERMANENTLY:
-                    throw new HttpMovedPermanentlyException($this);
-                case Response::HTTP_FOUND:
-                    throw new HttpMovedTemporarilyException($this);
-                case Response::HTTP_SEE_OTHER:
-                    throw new HttpSeeOtherException($this);
-                case Response::HTTP_NOT_MODIFIED:
-                    throw new HttpNotModifiedException($this);
-                case Response::HTTP_USE_PROXY:
-                    throw new HttpUseProxyException($this);
-                case Response::HTTP_RESERVED:
-                    throw new HttpReservedException($this);
-                case Response::HTTP_TEMPORARY_REDIRECT:
-                    throw new HttpTemporaryRedirectException($this);
-                case Response::HTTP_PERMANENTLY_REDIRECT:
-                    throw new HttpPermanentRedirectException($this);
-
+                    // 5xx
                 case Response::HTTP_INTERNAL_SERVER_ERROR:
                     throw new HttpInternalServerErrorException($this);
                 case Response::HTTP_NOT_IMPLEMENTED:

@@ -2,14 +2,18 @@
 
 namespace Adapterap\GuzzleClient;
 
+use Adapterap\GuzzleClient\Exceptions\GuzzleClientException;
 use Carbon\Carbon;
 use GuzzleHttp\Client;
 use GuzzleHttp\Exception\GuzzleException;
 use GuzzleHttp\RequestOptions;
 use Illuminate\Support\Facades\Log;
+use Psr\Http\Message\ResponseInterface as PsrResponseInterface;
 use Symfony\Contracts\HttpClient\Exception\ClientExceptionInterface;
 use Symfony\Contracts\HttpClient\Exception\RedirectionExceptionInterface;
 use Symfony\Contracts\HttpClient\Exception\ServerExceptionInterface;
+use Symfony\Contracts\HttpClient\Exception\TransportExceptionInterface;
+use Symfony\Contracts\HttpClient\ResponseInterface as SymfonyResponseInterface;
 use Throwable;
 
 /**
@@ -232,7 +236,7 @@ class GuzzleClientRequest
      * relative path to append to the base path of the client. The URL can
      * contain the query string as well.
      *
-     * @param string               $method  HTTP method
+     * @param string               $method HTTP method
      * @param string               $url
      * @param array<string, mixed> $options Request options to apply. See \GuzzleHttp\RequestOptions.
      *
@@ -265,42 +269,15 @@ class GuzzleClientRequest
                 $start
             );
 
-            if ($this->debug) {
-                Log::debug(static::class . ' debug', [
-                    'request' => [
-                        'base_uri' => $this->baseUri,
-                        'path' => $url,
-                        'method' => $method,
-                        'options' => $options,
-                    ],
-                    'response' => [
-                        'status' => $result->getStatusCode(),
-                        'headers' => $result->getHeaders(),
-                        'content' => $result->getBody(false),
-                        'metadata' => $response->getBody()->getMetadata(),
-                    ],
-                ]);
-            }
+            $this->logging($url, $method, $options, $response, $result);
 
             return $result;
+        } catch (GuzzleClientException $exception) {
+            $this->logging($url, $method, $options, $response, $exception->getResponse());
+
+            throw $exception;
         } catch (Throwable $throwable) {
-            if ($this->debug) {
-                Log::debug(static::class . ' debug', [
-                    'request' => [
-                        'base_uri' => $this->baseUri,
-                        'path' => $url,
-                        'method' => $method,
-                        'options' => $options,
-                    ],
-                    'response' => [
-                        'status' => $response->getStatusCode(),
-                        'headers' => $response->getHeaders(),
-                        'content' => $response->getBody()->getContents(),
-                        'metadata' => $response->getBody()->getMetadata(),
-                    ],
-                    'exception' => $throwable,
-                ]);
-            }
+            $this->logging($url, $method, $options, $response);
 
             throw $throwable;
         } finally {
@@ -350,6 +327,53 @@ class GuzzleClientRequest
             'base_uri' => $this->baseUri,
             RequestOptions::VERIFY => false,
             RequestOptions::HTTP_ERRORS => false,
+        ]);
+    }
+
+    /**
+     * Логирует запрос и ответ.
+     *
+     * @param string                                             $url
+     * @param string                                             $method
+     * @param mixed[]                                            $options
+     * @param PsrResponseInterface                               $originalResponse
+     * @param null|GuzzleClientResponse|SymfonyResponseInterface $response
+     *
+     * @throws ClientExceptionInterface
+     * @throws RedirectionExceptionInterface
+     * @throws ServerExceptionInterface
+     * @throws TransportExceptionInterface
+     */
+    private function logging(
+        string               $url,
+        string               $method,
+        array                $options,
+        PsrResponseInterface $originalResponse,
+                             $response = null
+    ): void
+    {
+        if ($this->debug === false) {
+            return;
+        }
+
+        Log::debug(static::class . ' debug', [
+            'request' => [
+                'base_uri' => $this->baseUri,
+                'path' => $url,
+                'method' => $method,
+                'options' => $options,
+            ],
+            'response' => [
+                'status' => $response
+                    ? $response->getStatusCode()
+                    : $originalResponse->getStatusCode(),
+                'headers' => $response
+                    ? $response->getHeaders(false)
+                    : $originalResponse->getHeaders(),
+                'content' => $response
+                    ? $response->getContent(false)
+                    : (string)$originalResponse->getBody()->getContents(),
+            ],
         ]);
     }
 }
