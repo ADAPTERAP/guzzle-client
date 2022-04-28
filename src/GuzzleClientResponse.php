@@ -296,7 +296,7 @@ class GuzzleClientResponse implements ResponseInterface
             $content = $this->response->getBody()->getContents();
             $this->content = (string) str_replace(' ', ' ', $content);
         }
-        
+
         $result = new GuzzleClientResponseInfo(
             $this->method,
             $this->url,
