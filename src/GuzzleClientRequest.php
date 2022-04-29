@@ -8,6 +8,7 @@ use GuzzleHttp\Client;
 use GuzzleHttp\Exception\GuzzleException;
 use GuzzleHttp\RequestOptions;
 use Illuminate\Support\Facades\Log;
+use JsonException;
 use Psr\Http\Message\ResponseInterface as PsrResponseInterface;
 use Symfony\Contracts\HttpClient\Exception\ClientExceptionInterface;
 use Symfony\Contracts\HttpClient\Exception\RedirectionExceptionInterface;
@@ -371,6 +372,16 @@ class GuzzleClientRequest
             return;
         }
 
+        if ($response) {
+            try {
+                $content = $response->toArray(false);
+            } catch (JsonException $exception) {
+                $content = $response->getContent(false);
+            }
+        } else {
+            $content = (string) $originalResponse->getBody()->getContents();
+        }
+
         Log::debug(static::class . ' debug', [
             'request' => [
                 'base_uri' => $this->baseUri,
@@ -385,9 +396,7 @@ class GuzzleClientRequest
                 'headers' => $response
                     ? $response->getHeaders(false)
                     : $originalResponse->getHeaders(),
-                'content' => $response
-                    ? $response->getContent(false)
-                    : (string) $originalResponse->getBody()->getContents(),
+                'content' => $content,
             ],
         ]);
     }
