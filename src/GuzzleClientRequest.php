@@ -382,7 +382,7 @@ class GuzzleClientRequest
             $content = (string) $originalResponse->getBody()->getContents();
         }
 
-        Log::debug(static::class . ' debug', [
+        $data = [
             'request' => [
                 'base_uri' => $this->baseUri,
                 'path' => $url,
@@ -398,6 +398,11 @@ class GuzzleClientRequest
                     : $originalResponse->getHeaders(),
                 'content' => $content,
             ],
-        ]);
+        ];
+
+        // Не передаем $data вторым параметром потому, что иногда json'ы могут быть глубокими,
+        // а Monolog умеет работать лишь с 9ю уровнями вложенности:
+        // Over 9 levels deep, aborting normalization
+        Log::debug(static::class . ' debug' . json_encode($data, JSON_THROW_ON_ERROR | JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES));
     }
 }
