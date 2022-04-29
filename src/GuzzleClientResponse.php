@@ -196,6 +196,7 @@ class GuzzleClientResponse implements ResponseInterface
      */
     public function getContent(bool $throw = true): string
     {
+        $this->readContentsFromStream();
         $this->throwAnExceptionIfNeed($throw);
 
         return $this->content;
@@ -306,13 +307,15 @@ class GuzzleClientResponse implements ResponseInterface
     }
 
     /**
-     * Вычитывает все содержимое из стрима.
+     * Вычитывает оставшееся содержимое из потока.
      */
     public function readContentsFromStream(): void
     {
-        if (isset($this->content) === false) {
+        if ($this->response->getBody()->isReadable() && $this->response->getBody()->eof() === false) {
             $content = $this->response->getBody()->getContents();
             $this->content = (string) str_replace(' ', ' ', $content);
+        } else {
+            $this->content ??= '';
         }
     }
 
