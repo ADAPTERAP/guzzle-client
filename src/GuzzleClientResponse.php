@@ -236,7 +236,15 @@ class GuzzleClientResponse implements ResponseInterface
     public function toArray(bool $throw = true): array
     {
         try {
-            return json_decode($this->getContent($throw), true, 512, JSON_THROW_ON_ERROR);
+            $content = json_decode($this->getContent($throw), true, 512, JSON_THROW_ON_ERROR);
+
+            if (!is_array($content)) {
+                $content = [
+                    'message' => $content,
+                ];
+            }
+
+            return $content;
         } catch (JsonException $exception) {
             if ($throw) {
                 throw new DecodingException($this, $exception);
@@ -285,6 +293,7 @@ class GuzzleClientResponse implements ResponseInterface
      * @throws ClientExceptionInterface
      * @throws RedirectionExceptionInterface
      * @throws ServerExceptionInterface
+     *
      * @return null|array|GuzzleClientResponseInfo|mixed An array of all available info, or one of them when $type is
      *                                                   provided, or null when an unsupported type is requested
      */
