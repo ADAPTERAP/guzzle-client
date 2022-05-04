@@ -291,6 +291,7 @@ class GuzzleClientResponse implements ResponseInterface
      * @throws ClientExceptionInterface
      * @throws RedirectionExceptionInterface
      * @throws ServerExceptionInterface
+     *
      * @return null|array|GuzzleClientResponseInfo|mixed An array of all available info, or one of them when $type is
      *                                                   provided, or null when an unsupported type is requested
      */
