@@ -239,7 +239,9 @@ class GuzzleClientResponse implements ResponseInterface
             $content = json_decode($this->getContent($throw), true, 512, JSON_THROW_ON_ERROR);
 
             if (!is_array($content)) {
-                $content = [$content];
+                $content = [
+                    'message' => $content,
+                ];
             }
 
             return $content;
