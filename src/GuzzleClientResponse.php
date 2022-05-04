@@ -236,15 +236,7 @@ class GuzzleClientResponse implements ResponseInterface
     public function toArray(bool $throw = true): array
     {
         try {
-            $content = json_decode($this->getContent($throw), true, 512, JSON_THROW_ON_ERROR);
-
-            if (!is_array($content)) {
-                $content = [
-                    'message' => $content,
-                ];
-            }
-
-            return $content;
+            return json_decode($this->getContent($throw), true, 512, JSON_THROW_ON_ERROR);
         } catch (JsonException $exception) {
             if ($throw) {
                 throw new DecodingException($this, $exception);
