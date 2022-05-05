@@ -51,13 +51,14 @@ abstract class GuzzleClientException extends RuntimeException implements Respons
      *
      * @param Request $request
      *
+     * @throws TransportExceptionInterface
      * @return JsonResponse
      */
     public function toResponse($request): JsonResponse
     {
         return new JsonResponse([
             'message' => $this->getMessage(),
-        ], JsonResponse::HTTP_INTERNAL_SERVER_ERROR);
+        ], $this->getResponse()->getStatusCode());
     }
 
     /**
