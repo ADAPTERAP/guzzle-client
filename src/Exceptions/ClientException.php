@@ -19,7 +19,7 @@ class ClientException extends GuzzleClientException implements ClientExceptionIn
      * @throws RedirectionExceptionInterface
      * @throws ServerExceptionInterface
      * @throws TransportExceptionInterface
-     * @return array
+     * @return mixed[]
      */
     public function context(): array
     {

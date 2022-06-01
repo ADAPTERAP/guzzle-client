@@ -68,7 +68,7 @@ abstract class GuzzleClientException extends RuntimeException implements Respons
      * @throws RedirectionExceptionInterface
      * @throws ServerExceptionInterface
      * @throws TransportExceptionInterface
-     * @return array
+     * @return mixed[]
      */
     public function context(): array
     {
