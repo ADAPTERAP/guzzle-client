@@ -39,7 +39,7 @@ abstract class GuzzleClientException extends RuntimeException implements Respons
     /**
      * Преобразует исключение в ответ от сервера.
      *
-     * @return ResponseInterface
+     * @return ResponseInterface|GuzzleClientResponse
      */
     public function getResponse(): ResponseInterface
     {
@@ -62,6 +62,22 @@ abstract class GuzzleClientException extends RuntimeException implements Respons
     }
 
     /**
+     * Контекст ошибки.
+     *
+     * @throws ClientExceptionInterface
+     * @throws RedirectionExceptionInterface
+     * @throws ServerExceptionInterface
+     * @throws TransportExceptionInterface
+     * @return mixed[]
+     */
+    public function context(): array
+    {
+        return [
+            'response' => $this->getResponse()->getContent(false),
+        ];
+    }
+
+    /**
      * Отправляет информацию об ошибке клиенту.
      *
      * @throws ClientExceptionInterface
@@ -71,9 +87,11 @@ abstract class GuzzleClientException extends RuntimeException implements Respons
      */
     public function report(): void
     {
-        Log::error($this->getMessage(), [
-            'response' => $this->getResponse()->getContent(false),
-            'exception' => $this,
-        ]);
+        Log::error(
+            $this->getMessage(),
+            array_merge($this->context(), [
+                'exception' => $this,
+            ])
+        );
     }
 }

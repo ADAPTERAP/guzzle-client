@@ -99,7 +99,7 @@ class GuzzleClientResponse implements ResponseInterface
      *
      * @var array<string, mixed>
      */
-    private array $options;
+    private array $requestOptions;
 
     /**
      * Ответ сервера.
@@ -127,22 +127,52 @@ class GuzzleClientResponse implements ResponseInterface
      *
      * @param string               $method
      * @param string               $url
-     * @param array<string, mixed> $options
+     * @param array<string, mixed> $requestOptions
      * @param PsrResponseInterface $response
      * @param CarbonInterface      $startTime
      */
     public function __construct(
         string $method,
         string $url,
-        array $options,
+        array $requestOptions,
         PsrResponseInterface $response,
         CarbonInterface $startTime
     ) {
         $this->method = $method;
         $this->url = $url;
-        $this->options = $options;
+        $this->requestOptions = $requestOptions;
         $this->response = $response;
         $this->startTime = $startTime;
+    }
+
+    /**
+     * Возвращает метод отправки запроса.
+     *
+     * @return string
+     */
+    public function getMethod(): string
+    {
+        return $this->method;
+    }
+
+    /**
+     * Возвращает url, на который был отправлен запрос.
+     *
+     * @return string
+     */
+    public function getUrl(): string
+    {
+        return $this->url;
+    }
+
+    /**
+     * Возвращает параметры запроса.
+     *
+     * @return mixed[]
+     */
+    public function getRequestOptions(): array
+    {
+        return $this->requestOptions;
     }
 
     /**
@@ -294,7 +324,7 @@ class GuzzleClientResponse implements ResponseInterface
         $result = new GuzzleClientResponseInfo(
             $this->method,
             $this->url,
-            $this->options,
+            $this->requestOptions,
             $this->response,
             $this->startTime,
             $this->getContent()
@@ -327,8 +357,8 @@ class GuzzleClientResponse implements ResponseInterface
      */
     public function isStream(): bool
     {
-        return array_key_exists(RequestOptions::STREAM, $this->options)
-            && $this->options[RequestOptions::STREAM] === true;
+        return array_key_exists(RequestOptions::STREAM, $this->requestOptions)
+            && $this->requestOptions[RequestOptions::STREAM] === true;
     }
 
     /**
